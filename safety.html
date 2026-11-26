@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亿航 EH216-S 全方位安全分析 | 飞行汽车技术基础 · 课程作业 02</title>
+<meta name="description" content="结合系统安全工程的各个方面，对亿航 EH216-S 无人驾驶载人 eVTOL 进行功能安全、预期功能安全、信息安全、被动安全、行为安全与运行安全论证的全方位深度安全分析。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23102d3c'/%3E%3Ctext x='16' y='21' font-size='13' fill='white' text-anchor='middle' font-family='monospace'%3EFV%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress"></div>
+
+<nav class="lab-nav">
+  <div class="lab-nav-inner">
+    <a class="lab-nav-logo" href="index.html"><span class="mark">FV</span><span>飞行汽车技术基础</span></a>
+    <button class="lab-nav-toggle" onclick="toggleNav()" aria-label="打开导航"><span></span><span></span><span></span></button>
+    <ul class="lab-nav-links">
+      <li><a href="index.html"><span>作业 01 · 调研分析</span><span class="en-sub">Case Study</span></a></li>
+      <li><a href="safety.html" class="active"><span>作业 02 · 安全分析</span><span class="en-sub">Safety Analysis</span></a></li>
+      <li><a href="#framework"><span>框架</span><span class="en-sub">Framework</span></a></li>
+      <li><a href="#hara"><span>危害分析</span><span class="en-sub">HARA</span></a></li>
+      <li><a href="#fusa"><span>功能安全</span><span class="en-sub">FuSa</span></a></li>
+      <li><a href="#sotif"><span>SOTIF</span><span class="en-sub">SOTIF</span></a></li>
+      <li><a href="#references"><span>参考文献</span><span class="en-sub">References</span></a></li>
+      <li class="nav-sep"></li>
+      <li><button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="switcher">
+  <div class="switcher-inner">
+    <a class="switcher-tab" href="index.html"><span class="num">01</span><span>全方位调研与分析 / Comprehensive Review</span></a>
+    <a class="switcher-tab current" href="safety.html"><span class="num">02</span><span>全方位安全分析 / Safety Analysis</span></a>
+    <span class="switcher-meta">EVIDENCE CUT-OFF 2026-11-26 &nbsp;·&nbsp; V1.0</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="kicker"><span class="cn">飞行汽车技术基础 · 课程作业 02 · 系统安全工程</span><span class="en">Fundamentals of Flying Vehicle Technology · Coursework 02 · Safety Systems Engineering</span></p>
+      <h1>
+        <span class="cn">亿航 EH216-S<br>全方位安全分析</span>
+        <span class="en">EHang EH216-S<br>Comprehensive Safety Analysis</span>
+        <span class="sub-en">Applying the full safety systems engineering process to a pilotless passenger-carrying eVTOL — from hazard analysis to operational safety argument</span>
+      </h1>
+      <p class="deck cn">本页针对这款双座无人驾驶载人 eVTOL，应用<strong>系统安全工程全过程</strong>：从整机功能与运行场景定义出发，逐层展开危害分析、功能安全、预期功能安全、信息安全、被动与碰撞安全、行为安全，最终落到安全需求架构、验证确认与运行安全论证。</p>
+      <p class="deck en">This page applies the full safety systems engineering process to the two-seat pilotless passenger-carrying eVTOL: from vehicle functions and operational scenario definition, through hazard analysis, functional safety, SOTIF, cybersecurity, crashworthiness and behavioural safety, to the safety requirements architecture, verification and validation, and the operational safety case.</p>
+    </div>
+    <figure class="hero-figure">
+      <img src="assets/img/eh216-general.jpg" alt="EH216 整机斜前视角，可见八轴十六旋翼与中央双座座舱">
+      <figcaption>
+        <span class="cn">题图：EH216 整机斜前视角，可见八条机臂、共轴双旋翼动力单元与中央双座座舱。摄影：David Perez，<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a>，来源 <a href="https://commons.wikimedia.org/wiki/File:EHang_216_8_vista_general_by-dpc.jpg" target="_blank" rel="noopener">Wikimedia Commons</a><sup><a class="cite" href="#r30">[30]</a></sup>。图中为展示机，用于识别构型；安全分析以审定构型为对象，但所有参数均为公开口径。</span>
+        <span class="en">Hero image: EH216 overall view showing eight arms, coaxial rotor units and the two-seat cabin. Photo: David Perez, CC0, Wikimedia Commons [30]. Display aircraft shown for configuration identification only.</span>
+      </figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="container shell">
+
+  <nav class="toc" aria-label="文章目录">
+    <p class="toc-title"><span class="cn">文章目录 / Contents</span><span class="en">Contents</span></p>
+    <ol>
+      <li><a href="#summary"><span class="tn">00</span><span class="cn">执行摘要</span><span class="en">Executive summary</span></a></li>
+      <li><a href="#framework"><span class="tn">01</span><span class="cn">分析框架与证据边界</span><span class="en">Framework</span></a></li>
+      <li><a href="#odc"><span class="tn">02</span><span class="cn">运行设计条件与场景</span><span class="en">Operational design conditions</span></a></li>
+      <li><a href="#hara"><span class="tn">03</span><span class="cn">危害分析与风险评估</span><span class="en">Hazard analysis</span></a></li>
+      <li><a href="#fusa"><span class="tn">04</span><span class="cn">功能安全与失效分析</span><span class="en">Functional safety</span></a></li>
+      <li><a href="#sotif"><span class="tn">05</span><span class="cn">预期功能安全 SOTIF</span><span class="en">SOTIF</span></a></li>
+      <li><a href="#security"><span class="tn">06</span><span class="cn">信息安全与电磁兼容</span><span class="en">Cybersecurity &amp; EMC</span></a></li>
+      <li><a href="#passive"><span class="tn">07</span><span class="cn">被动安全与多维碰撞</span><span class="en">Crashworthiness</span></a></li>
+      <li><a href="#behavior"><span class="tn">08</span><span class="cn">行为安全与人为因素</span><span class="en">Behavioural safety</span></a></li>
+      <li><a href="#architecture"><span class="tn">09</span><span class="cn">安全需求与冗余架构</span><span class="en">Safety architecture</span></a></li>
+      <li><a href="#standards"><span class="tn">10</span><span class="cn">标准体系与适航符合性</span><span class="en">Standards &amp; compliance</span></a></li>
+      <li><a href="#validation"><span class="tn">11</span><span class="cn">安全测试验证与确认</span><span class="en">Verification &amp; validation</span></a></li>
+      <li><a href="#assurance"><span class="tn">12</span><span class="cn">运行安全论证与持续适航</span><span class="en">Safety case</span></a></li>
+      <li><a href="#conclusion"><span class="tn">13</span><span class="cn">综合风险清单与结论</span><span class="en">Risk register &amp; conclusion</span></a></li>
+      <li><a href="#references"><span class="tn">14</span><span class="cn">参考文献</span><span class="en">References</span></a></li>
+    </ol>
+    <p class="toc-foot"><span class="cn">姊妹篇：<a href="index.html">作业 01 · EH216-S 全方位调研与分析</a>，本页沿用其研究对象、参数口径与证据分级规则。</span><span class="en">Companion paper: <a href="index.html">Coursework 01</a> — same subject, parameters and evidence grading.</span></p>
+  </nav>
+
+  <article class="article">
+
+    <!-- ============ 00 执行摘要 ============ -->
+    <section id="summary">
+      <h2><span class="h2-num">SECTION 00</span><span class="cn">执行摘要</span><span class="en">Executive Summary</span></h2>
+
+      <div class="executive">
+        <h2><span class="cn">六条核心判断</span><span class="en">Six core judgements</span></h2>
+        <ol>
+          <li><span class="cn"><strong>安全目标数量级跃升：</strong>飞行汽车面向载人飞行，其航空级安全要求远高于地面交通。课件第五章以 <strong>10⁻⁹</strong> 量级的灾难性失效概率作为对照，指出"技术同源但体系不等价"——新能源汽车三电与无人机飞控虽高度同源，仍必须按航空适航体系做系统级重构<sup><a class="cite" href="#r21">[21]</a></sup>。</span><span class="en"><strong>Order-of-magnitude shift:</strong> passenger flight demands aviation-grade safety, with catastrophic failure probability on the order of 10⁻⁹. Automotive and UAV technologies are highly homologous but not equivalent; a system-level reconstruction against airworthiness requirements is mandatory [21].</span></li>
+          <li><span class="cn"><strong>无人驾驶重构了风险分布：</strong>取消机载驾驶员消除了人为操纵失误这一传统主因（课件引用 NHTSA：道路事故 90% 以上与人为因素有关<sup><a class="cite" href="#r21">[21]</a></sup>），但把风险转移到预设航线、地面调度、通信链路与应急逻辑。<strong>安全边界从"单机"扩展为"机—地—网—管"体系</strong>。</span><span class="en"><strong>Pilotless operation redistributes risk:</strong> removing the on-board pilot eliminates human error (NHTSA: &gt;90% of road crashes involve human factors [21]) but transfers risk to pre-loaded routes, ground dispatch, data links and contingency logic. The safety boundary becomes a system of systems.</span></li>
+          <li><span class="cn"><strong>五类安全缺一不可：</strong>被动安全、功能安全（ISO 26262 思路 / ARP4754A、ARP4761）、预期功能安全（ISO 21448）、行为安全（IEEE P2846 类假设）、信息安全（ISO/SAE 21434、TARA）构成完整拼图；课件第五章明确将"由内而外的安全关键复杂系统工程"作为统合框架<sup><a class="cite" href="#r21">[21]</a></sup>。</span><span class="en"><strong>Five safety classes are jointly necessary:</strong> passive, functional, SOTIF, behavioural and cybersecurity safety, unified under the "safety-critical complex systems engineering from the inside out" framing of Chapter 5 [21].</span></li>
+          <li><span class="cn"><strong>全备份不等于无共因失效：</strong>8 轴 16 旋翼、多组电池、多余度飞控提供了充分的冗余资源，但真正的适航难点在于<strong>共因分析（CCA）、故障传播机理与重构控制律的验证</strong>，以及全机系统安全性分析（FHA / PSSA / SSA / FTA）的证据链完整性<sup><a class="cite" href="#r21">[21]</a></sup>。</span><span class="en"><strong>Redundancy is not immunity:</strong> sixteen rotors, multiple battery groups and redundant flight computers provide resources, but the certification challenge lies in common-cause analysis, failure propagation, reconfiguration control laws and a complete FHA/PSSA/SSA/FTA evidence chain [21].</span></li>
+          <li><span class="cn"><strong>SOTIF 是本构型最薄弱的一环：</strong>低空复杂气象（雷暴、强风、大雨）、GNSS 遮挡与多路径、突发障碍物、链路时延以及乘客误用，属于"功能正确但性能不足"的风险，无法靠冗余硬件消除，只能靠运行设计条件（ODC）约束、场景化验证与触发条件识别<sup><a class="cite" href="#r21">[21]</a></sup><sup><a class="cite" href="#r14">[14]</a></sup>。</span><span class="en"><strong>SOTIF is the weakest link:</strong> low-altitude weather, GNSS occlusion, obstacles, link latency and passenger misuse are performance-limitation risks that redundancy cannot remove; they require ODC constraints, scenario-based validation and triggering-condition identification [21][14].</span></li>
+          <li><span class="cn"><strong>结论分层：</strong>限定 ODC 内的<strong>设计安全性已通过局方审定</strong>；但公开资料不足以支持"高频次、多站点、复杂气象下运行安全已充分验证"的结论。安全论证是一个需要运行数据持续喂养的<strong>生命周期过程</strong>，而非一次取证即可封存的结果<sup><a class="cite" href="#r21">[21]</a></sup><sup><a class="cite" href="#r22">[22]</a></sup>。</span><span class="en"><strong>Layered conclusion:</strong> design safety within a limited ODC has been accepted by the regulator; public evidence does not support a claim of fully validated safety under high-frequency, multi-site, complex-weather operations. The safety case is a lifecycle process fed by operating data, not a one-off certification artefact [21][22].</span></li>
+        </ol>
+      </div>
+
+      <div class="stat-band" aria-label="关键数字">
+        <div><strong>10<sup style="font-size:.42em">−9</sup></strong><span><span class="cn">航空级灾难性失效概率目标量级</span><span class="en">Order of magnitude for catastrophic failure</span></span></div>
+        <div><strong>16<span class="unit"> 单元</span></strong><span><span class="cn">独立动力单元，提供推力重构资源</span><span class="en">Independent propulsion units for thrust reallocation</span></span></div>
+        <div><strong>0<span class="unit"> 驾驶员</span></strong><span><span class="cn">机上无驾驶员，安全责任移至地面体系</span><span class="en">No on-board pilot; responsibility shifts to ground systems</span></span></div>
+        <div><strong>9<span class="unit"> 步</span></strong><span><span class="cn">课件安全系统工程基本过程 0—8</span><span class="en">Nine-step safety systems engineering process</span></span></div>
+      </div>
+      <p class="small"><span class="cn">注：10⁻⁹ 为课件第五章给出的<strong>体系对照量级</strong>，不是 EH216-S 经审定的定量指标；本文不引用任何未经公开验证的失效概率数值。所有危害、失效与措施分析均为基于公开资料与课程框架的<strong>教学推演（E4）</strong>，不代表局方审定结论或企业设计文件。</span><span class="en">Note: 10⁻⁹ is the system-level comparison figure from Chapter 5, not a certified figure for EH216-S. All analyses here are teaching exercises (E4) based on public information and course frameworks, not regulatory findings or manufacturer design documents.</span></p>
+    </section>
+
+    <!-- ============ 01 框架 ============ -->
+    <h2 id="framework"><span class="h2-num">SECTION 01</span><span class="cn">分析框架与证据边界</span><span class="en">Analytical Framework and Evidence Boundary</span></h2>
+
+    <p class="lead cn">课件第五章的知识链路是"系统工程（SE）→ 安全系统工程（SSE）→ 面向新型运载工具的安全系统工程"，并把可靠性、可用性、维修性、安全性（RAMS）作为专业工程支柱<sup><a class="cite" href="#r21">[21]</a></sup>。本页据此建立分析框架：<strong>以整机功能与场景定义为起点，以安全分析方法为工具，以安全需求与安全架构为产出，以测试验证与运行安全论证为闭环</strong>。</p>
+    <p class="lead en">Chapter 5's chain runs from systems engineering to safety systems engineering to safety engineering for emerging vehicles, with RAMS as the professional discipline [21]. This page starts from vehicle-level function and scenario definition, applies safety analysis methods, derives safety requirements and architecture, and closes with verification and an operational safety argument.</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 1 / Figure 1</span><span class="en">Figure 1</span></span>
+      <svg viewBox="0 0 800 336" role="img" aria-label="安全系统工程九步过程与三个层级">
+        <rect width="800" height="336" fill="#fff"/>
+        <text x="24" y="28" class="th">安全系统工程基本过程（0—8）与系统层级</text>
+        <text x="24" y="46" class="tm">Nine-step process and system levels, after Chapter 5, pp.80–87</text>
+        <!-- level bands -->
+        <g class="tm">
+          <text x="24" y="80">Vehicle Level / 整机层</text>
+          <text x="24" y="170">System Level / 系统层</text>
+          <text x="24" y="246">Component &amp; Operation Level / 组件与运行层</text>
+        </g>
+        <line x1="180" y1="66" x2="180" y2="290" class="line"/>
+        <!-- process boxes -->
+        <g>
+          <rect x="196" y="66" width="112" height="62" rx="2" class="box-deep"/>
+          <text x="252" y="90" class="tw" text-anchor="middle" font-size="11">0 安全文化</text>
+          <text x="252" y="108" class="tw" text-anchor="middle" font-size="10" opacity="0.85">与安全管理</text>
+          <rect x="320" y="66" width="112" height="62" rx="2" class="box-blue"/>
+          <text x="376" y="90" class="th" text-anchor="middle" font-size="11">1 功能与场景</text>
+          <text x="376" y="108" class="tm" text-anchor="middle">定义整机 / ODC</text>
+          <rect x="444" y="66" width="112" height="62" rx="2" class="box-blue"/>
+          <text x="500" y="90" class="th" text-anchor="middle" font-size="11">2 安全分析</text>
+          <text x="500" y="108" class="tm" text-anchor="middle">HARA/FHA/STPA</text>
+          <rect x="568" y="66" width="112" height="62" rx="2" class="box-blue"/>
+          <text x="624" y="90" class="th" text-anchor="middle" font-size="11">3 安全架构</text>
+          <text x="624" y="108" class="tm" text-anchor="middle">需求分解 / 冗余</text>
+          <rect x="692" y="66" width="84" height="62" rx="2" class="box-soft"/>
+          <text x="734" y="94" class="ts" text-anchor="middle">V 模型</text>
+          <text x="734" y="112" class="tm" text-anchor="middle">左侧</text>
+        </g>
+        <g>
+          <rect x="196" y="150" width="140" height="62" rx="2" class="box"/>
+          <text x="266" y="176" class="ts" text-anchor="middle">4 硬件安全设计</text>
+          <text x="266" y="194" class="tm" text-anchor="middle">FMEDA / 绝缘 / 互锁</text>
+          <rect x="348" y="150" width="140" height="62" rx="2" class="box"/>
+          <text x="418" y="176" class="ts" text-anchor="middle">5 软件安全设计</text>
+          <text x="418" y="194" class="tm" text-anchor="middle">机载控制软件</text>
+          <rect x="500" y="150" width="140" height="62" rx="2" class="box"/>
+          <text x="570" y="176" class="ts" text-anchor="middle">6 机械/化学安全</text>
+          <text x="570" y="194" class="tm" text-anchor="middle">电池 / 阻燃 / 防护</text>
+          <rect x="652" y="150" width="124" height="62" rx="2" class="box-soft"/>
+          <text x="714" y="176" class="ts" text-anchor="middle">安全措施</text>
+          <text x="714" y="194" class="tm" text-anchor="middle">Develop / V&amp;V</text>
+        </g>
+        <g>
+          <rect x="196" y="228" width="176" height="62" rx="2" class="box-blue"/>
+          <text x="284" y="254" class="th" text-anchor="middle" font-size="11">7 安全测试验证</text>
+          <text x="284" y="272" class="tm" text-anchor="middle">组件 → 系统 → 整机 → 确认</text>
+          <rect x="384" y="228" width="176" height="62" rx="2" class="box-blue"/>
+          <text x="472" y="254" class="th" text-anchor="middle" font-size="11">8 运行安全论证</text>
+          <text x="472" y="272" class="tm" text-anchor="middle">流程 + 产品论证 / GSN</text>
+          <rect x="572" y="228" width="204" height="62" rx="2" class="box-soft"/>
+          <text x="674" y="252" class="ts" text-anchor="middle">安全需求 → 措施 → 论证</text>
+          <text x="674" y="270" class="tm" text-anchor="middle">Passive / FuSa / SOTIF / Security</text>
+        </g>
+        <line x1="24" y1="306" x2="776" y2="306" class="line"/>
+        <text x="24" y="326" class="tm">依据课件第五章第 80、84—87 页"基本过程 / 实现方法 / 方法解析"重绘；层级划分参考第 49、82—83 页 [21] (E3/E4)。</text>
+      </svg>
+      <figcaption><span class="cn">图 1　安全系统工程九步过程与层级映射。0 为贯穿性基础，1—3 属 V 模型左侧（基于场景的安全开发），4—6 为组件安全设计，7—8 属 V 模型右侧（基于场景的安全测试验证与运行论证）<sup><a class="cite" href="#r21">[21]</a></sup>（E3/E4）。</span><span class="en">Figure 1 · Nine-step process and level mapping, redrawn from Chapter 5, pp.80, 84–87 [21]. Steps 1–3 form the left side of the V-model; 7–8 the right side.</span></figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 1　九步过程的输入、方法与输出（Table 1 · Process inputs, methods and outputs）</span><span class="en">Table 1 · Process inputs, methods and outputs</span></caption>
+        <thead><tr><th><span class="cn">步骤</span><span class="en">Step</span></th><th><span class="cn">主要方法</span><span class="en">Methods</span></th><th><span class="cn">输出物</span><span class="en">Output</span></th><th><span class="cn">本文对应章节</span><span class="en">Section</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">0 安全文化与安全管理</span><span class="en">0 Safety culture &amp; management</span></td><td><span class="cn">组织、人员、生命周期、方法与工具充分性</span><span class="en">Organisation, personnel, lifecycle, tool adequacy</span></td><td><span class="cn">安全管理体系、流程安全论证</span><span class="en">SMS, process safety argument</span></td><td>§12</td></tr>
+          <tr><td><span class="cn">1 整机功能与场景定义</span><span class="en">1 Function &amp; scenario</span></td><td><span class="cn">基于模型的功能定义、基于 ODC 的场景分析</span><span class="en">Model-based function definition, ODC analysis</span></td><td><span class="cn">功能清单、运行边界、场景库</span><span class="en">Function list, ODC, scenario catalogue</span></td><td>§02</td></tr>
+          <tr><td><span class="cn">2 安全分析方法</span><span class="en">2 Safety analysis</span></td><td><span class="cn">HARA / FHA / STPA；FMEA / FTA / CCA / PSSA / SSA；FMEDA / CAE</span><span class="en">HARA/FHA/STPA; FMEA/FTA/CCA/PSSA/SSA; FMEDA/CAE</span></td><td><span class="cn">危害清单、安全目标、安全需求</span><span class="en">Hazard list, safety goals, requirements</span></td><td>§03 §04</td></tr>
+          <tr><td><span class="cn">3 系统安全架构设计</span><span class="en">3 Safety architecture</span></td><td><span class="cn">1oo2 / 2oo3 / 1oo2D 等典型架构、ASIL/DAL 分解</span><span class="en">Redundant architectures, ASIL/DAL allocation</span></td><td><span class="cn">安全架构、安全机制清单</span><span class="en">Architecture, safety mechanism list</span></td><td>§09</td></tr>
+          <tr><td><span class="cn">4—6 组件安全设计</span><span class="en">4–6 Component design</span></td><td><span class="cn">绝缘/短路/高压互锁；防呆/阻燃/防腐；热失控预警</span><span class="en">Insulation, interlocks, flame retardance, thermal runaway warning</span></td><td><span class="cn">组件安全需求与实现证据</span><span class="en">Component requirements and evidence</span></td><td>§04 §07</td></tr>
+          <tr><td><span class="cn">7 安全测试验证</span><span class="en">7 V&amp;V</span></td><td><span class="cn">逻辑/具体/测试场景生成；组件→系统→整机集成</span><span class="en">Scenario generation; component → system → aircraft tests</span></td><td><span class="cn">测试报告、安全确认结论</span><span class="en">Test reports, safety confirmation</span></td><td>§11</td></tr>
+          <tr><td><span class="cn">8 运行安全论证</span><span class="en">8 Safety argument</span></td><td><span class="cn">GSN / SACM；流程论证 + 产品论证</span><span class="en">GSN/SACM; process and product arguments</span></td><td><span class="cn">安全案例、持续适航记录</span><span class="en">Safety case, continued airworthiness</span></td><td>§12</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout note">
+      <strong><span class="cn">证据边界与免责声明</span><span class="en">Evidence boundary and disclaimer</span></strong>
+      <p class="cn">型号合格证数据单、专用条件符合性方法、系统安全性评估报告（SSA）、故障树定量数据、飞行手册限制与运营规范均未公开。因此本页的<strong>危害清单、FMEA、FTA、风险矩阵与 GSN 骨架均为教学推演（E4）</strong>，用于演示"应当怎样分析"，<strong>不是</strong>对 EH216-S 实际设计或审定符合性的判断。凡涉及真实审定结论，本文只引用局方公开信息（E1）并明确标注。</p>
+      <p class="en">Approved data sheets, compliance methods, system safety assessments, quantified fault trees and flight-manual limitations are not public. All hazard lists, FMEA, FTA, risk matrices and GSN structures here are teaching exercises (E4) demonstrating how the analysis should be performed — not findings about the actual design or certification of EH216-S.</p>
+    </div>
+
+    <h3><span class="cn">1.1　从"人—车—环境"到"机—地—网—管"</span><span class="en">1.1 From human–vehicle–environment to aircraft–ground–network–regulator</span></h3>
+    <p class="cn">课件以"人—车—环境"系统视角分析自动驾驶汽车的安全挑战，并指出传统车与自动化车辆在感知、决策、执行、接管上的差异；当自动化等级提高，车辆自身导致的事故占比会上升<sup><a class="cite" href="#r21">[21]</a></sup>。EH216-S 把这一逻辑推到极致：<strong>机上既没有驾驶员也没有接管主体</strong>，控制动作由飞控系统发出，运行约束由地面调度系统与法规共同施加。因此本页把分析对象从三层扩展为四域。</p>
+    <p class="en">Chapter 5 analyses automated driving through the human–vehicle–environment lens and notes that automation shifts accident causation toward the vehicle itself [21]. EH216-S removes both the pilot and any takeover agent: control actions come from the flight-control system while constraints are imposed by ground dispatch and regulation. Four domains are therefore analysed.</p>
+
+    <!-- ============ 02 ODC ============ -->
+    <h2 id="odc"><span class="h2-num">SECTION 02</span><span class="cn">运行设计条件与场景定义</span><span class="en">Operational Design Conditions and Scenario Definition</span></h2>
+
+    <p class="cn">课件在方法解析中把"基于运行设计条件（ODC）的场景分析"列为第 1 步的核心，并把"ODD 退出、性能局限"列为必须识别的风险来源<sup><a class="cite" href="#r21">[21]</a></sup>。对预设航线无人驾驶构型而言，ODC 不只是"天气好不好"，而是一组可审计的边界条件：一旦任一条件被突破，系统必须进入预先定义的应急逻辑，而不是继续按原航线飞行。</p>
+    <p class="en">Chapter 5 places ODC-based scenario analysis at the core of step 1 and identifies ODD exit and performance limitations as risk sources [21]. For a pilotless pre-programmed aircraft, the ODC is a set of auditable boundary conditions: breaching any one must trigger predefined contingency logic rather than continued route-following.</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 2　教学用 ODC 边界与退出条件（Table 2 · Indicative ODC boundaries and exit conditions）</span><span class="en">Table 2 · Indicative ODC boundaries and exit conditions</span></caption>
+        <thead><tr><th><span class="cn">维度</span><span class="en">Dimension</span></th><th><span class="cn">边界条件（教学设定）</span><span class="en">Boundary (teaching assumption)</span></th><th><span class="cn">退出/触发条件</span><span class="en">Exit / trigger</span></th><th><span class="cn">预期响应</span><span class="en">Expected response</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">空域与航线</span><span class="en">Airspace / route</span></td><td><span class="cn">已批准封闭/隔离航线，预设航点、高度与备降点</span><span class="en">Approved isolated route, pre-loaded waypoints and alternates</span></td><td><span class="cn">偏离航线包线、未授权空域侵入</span><span class="en">Route envelope deviation, unauthorised airspace entry</span></td><td><span class="cn">返航 / 就近备降 / 地面接管</span><span class="en">Return, divert, ground takeover</span></td></tr>
+          <tr><td><span class="cn">气象</span><span class="en">Weather</span></td><td><span class="cn">风速、能见度、降水、温度在获批限制内</span><span class="en">Wind, visibility, precipitation and temperature within approved limits</span></td><td><span class="cn">雷暴、强风切变、大雨、结冰条件</span><span class="en">Thunderstorm, wind shear, heavy rain, icing</span></td><td><span class="cn">禁止起飞 / 提前终止 / 备降</span><span class="en">No dispatch, abort, divert</span></td></tr>
+          <tr><td><span class="cn">能源与载荷</span><span class="en">Energy / payload</span></td><td><span class="cn">电池 SOC、温度、载荷与重心在限制内</span><span class="en">SOC, temperature, payload and CG within limits</span></td><td><span class="cn">剩余电量低于 reserve、单体异常、热失控预警</span><span class="en">Below reserve, cell anomaly, thermal warning</span></td><td><span class="cn">立即着陆 / 隔离故障电池组</span><span class="en">Immediate landing, isolate pack</span></td></tr>
+          <tr><td><span class="cn">机载系统</span><span class="en">On-board systems</span></td><td><span class="cn">动力单元、飞控、导航、链路健康状态满足最低配置</span><span class="en">Minimum equipment/configuration for propulsion, FCC, navigation, link</span></td><td><span class="cn">冗余降级超出最低配置</span><span class="en">Redundancy degraded below minimum</span></td><td><span class="cn">故障重构 / 应急着陆</span><span class="en">Reconfiguration, contingency landing</span></td></tr>
+          <tr><td><span class="cn">链路与地面</span><span class="en">Link / ground</span></td><td><span class="cn">指挥调度链路可用、地面操作员在岗</span><span class="en">Command link available, ground operator on duty</span></td><td><span class="cn">链路中断超过时限、地面站失效</span><span class="en">Link loss beyond time limit, ground station failure</span></td><td><span class="cn">机载自主应急逻辑接管</span><span class="en">On-board autonomous contingency logic</span></td></tr>
+          <tr><td><span class="cn">人员与场地</span><span class="en">People / site</span></td><td><span class="cn">乘客约束就位、起降区净空、无关人员隔离</span><span class="en">Passengers restrained, landing area clear, bystanders segregated</span></td><td><span class="cn">乘客误操作、场地侵入</span><span class="en">Passenger misuse, site intrusion</span></td><td><span class="cn">中止起飞 / 悬停等待 / 告警</span><span class="en">Abort, hold, alert</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small"><span class="cn">表 2 为本文依课件框架与公开运行方式构造的<strong>教学用 ODC 示例（E4）</strong>，具体数值、最低设备清单与应急时限应以飞行手册、运行规范与局方批准文件为准。</span><span class="en">Table 2 is a teaching ODC example (E4). Actual limits, minimum equipment lists and contingency timeouts are governed by the approved flight manual and operations specifications.</span></p>
+
+    <div class="callout warn">
+      <strong><span class="cn">为什么"链路中断"必须按失效处理，而不是按"通信不便"处理</span><span class="en">Why link loss is a failure, not an inconvenience</span></strong>
+      <p class="cn">在有人驾驶航空器中，通信中断时驾驶员仍可独立完成飞行；在 EH216-S 这类构型中，地面调度承担着航线管理、运行监控与应急决策的部分职能。因此链路完整性属于<strong>安全关键功能</strong>，其失效必须纳入 FHA 与 FTA，并用机载自主应急逻辑作为最后屏障。这是"取消驾驶员"带来的最典型的安全需求转移。</p>
+      <p class="en">In piloted aviation, a pilot can continue independently after losing communications. Here the ground centre shares route management, monitoring and contingency decisions, making link integrity safety-critical and requiring on-board autonomous contingency logic as the last barrier.</p>
+    </div>
+
+    <!-- ============ 03 HARA ============ -->
+    <h2 id="hara"><span class="h2-num">SECTION 03</span><span class="cn">危害分析与风险评估</span><span class="en">Hazard Analysis and Risk Assessment</span></h2>
+
+    <p class="cn">课件把"Hazard analysis and risk assessment"列为飞行汽车设计阶段的首要考虑，并给出全机系统安全性分析的组合（FHA / FTA / SSA）与城市场景运行风险分析<sup><a class="cite" href="#r21">[21]</a></sup>；同时从民航领域借入 FTA、CCA、ETA、Bow-Tie、BBN 等因果模型，从航空航天领域借入 Vehicle / System / HW / SW 分层，从自动驾驶领域借入 CAE、HAZOP、HARA、FMEA、FTA、STPA、TARA 等方法集<sup><a class="cite" href="#r21">[21]</a></sup>。本节据此构建教学用危害清单与风险矩阵。</p>
+    <p class="en">Chapter 5 places hazard analysis and risk assessment first among design-stage considerations, and assembles methods from civil aviation (FTA, CCA, ETA, Bow-Tie, BBN), aerospace (vehicle/system/HW/SW levels) and automated driving (CAE, HAZOP, HARA, FMEA, FTA, STPA, TARA) [21].</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 3　整机级危害清单与风险评估（教学推演，Table 3 · Vehicle-level hazard list）</span><span class="en">Table 3 · Vehicle-level hazard list (teaching exercise)</span></caption>
+        <thead><tr><th><span class="cn">编号</span><span class="en">ID</span></th><th><span class="cn">危害 / Hazard</span><span class="en">Hazard</span></th><th><span class="cn">典型触发条件</span><span class="en">Trigger</span></th><th><span class="cn">严酷度</span><span class="en">Severity</span></th><th><span class="cn">顶层安全目标</span><span class="en">Top-level safety goal</span></th></tr></thead>
+        <tbody>
+          <tr><td class="num">H-01</td><td><span class="cn">升力不足导致不可控下降</span><span class="en">Insufficient lift / uncontrolled descent</span></td><td><span class="cn">多个动力单元失效、供电中断</span><span class="en">Multiple propulsion unit failures, power loss</span></td><td class="lvl-a"><span class="cn">灾难性</span><span class="en">Catastrophic</span></td><td><span class="cn">SG-01 任一点失效后维持可控飞行/着陆</span><span class="en">SG-01 Maintain controlled flight/landing after any single failure</span></td></tr>
+          <tr><td class="num">H-02</td><td><span class="cn">姿态失控 / 翻滚</span><span class="en">Loss of attitude control</span></td><td><span class="cn">飞控指令错误、传感器共模错误</span><span class="en">Erroneous FCC command, common-mode sensor error</span></td><td class="lvl-a"><span class="cn">灾难性</span><span class="en">Catastrophic</span></td><td><span class="cn">SG-02 姿态控制通道具备异构冗余与监控</span><span class="en">SG-02 Heterogeneous redundancy and monitoring of attitude control</span></td></tr>
+          <tr><td class="num">H-03</td><td><span class="cn">动力电池热失控 / 空中火灾</span><span class="en">Battery thermal runaway / in-flight fire</span></td><td><span class="cn">单体缺陷、过充、碰撞挤压</span><span class="en">Cell defect, overcharge, impact</span></td><td class="lvl-a"><span class="cn">灾难性</span><span class="en">Catastrophic</span></td><td><span class="cn">SG-03 热失控可检测、可隔离、可安全着陆</span><span class="en">SG-03 Detectable, isolatable, survivable</span></td></tr>
+          <tr><td class="num">H-04</td><td><span class="cn">航线偏离 / 空域侵入</span><span class="en">Route deviation / airspace infringement</span></td><td><span class="cn">导航误差、GNSS 欺骗、航线数据错误</span><span class="en">Navigation error, GNSS spoofing, bad route data</span></td><td class="lvl-b"><span class="cn">危险</span><span class="en">Hazardous</span></td><td><span class="cn">SG-04 位置可信且受地理围栏约束</span><span class="en">SG-04 Trusted position with geofence containment</span></td></tr>
+          <tr><td class="num">H-05</td><td><span class="cn">与障碍物/其他航空器相撞</span><span class="en">Collision with obstacles / other aircraft</span></td><td><span class="cn">感知局限、鸟群、低能见度、调度冲突</span><span class="en">Perception limits, birds, low visibility, dispatch conflict</span></td><td class="lvl-a"><span class="cn">灾难性</span><span class="en">Catastrophic</span></td><td><span class="cn">SG-05 保持间隔或及时中止</span><span class="en">SG-05 Separation assurance or timely abort</span></td></tr>
+          <tr><td class="num">H-06</td><td><span class="cn">指挥链路被干扰或劫持</span><span class="en">Command link jammed or hijacked</span></td><td><span class="cn">电磁干扰、伪造指令、地面站入侵</span><span class="en">EMI, forged commands, ground-station intrusion</span></td><td class="lvl-b"><span class="cn">危险</span><span class="en">Hazardous</span></td><td><span class="cn">SG-06 指令真实性可验证，失链可自主处置</span><span class="en">SG-06 Authenticated commands, autonomous loss-of-link behaviour</span></td></tr>
+          <tr><td class="num">H-07</td><td><span class="cn">极端气象超出能力边界</span><span class="en">Weather beyond capability</span></td><td><span class="cn">雷暴、风切变、强降雨、结冰</span><span class="en">Thunderstorm, shear, heavy rain, icing</span></td><td class="lvl-b"><span class="cn">危险</span><span class="en">Hazardous</span></td><td><span class="cn">SG-07 ODC 违反前禁止起飞并可执行备降</span><span class="en">SG-07 No dispatch beyond ODC; divert capability</span></td></tr>
+          <tr><td class="num">H-08</td><td><span class="cn">乘客误用 / 应急操作不当</span><span class="en">Passenger misuse / improper emergency action</span></td><td><span class="cn">误触舱门、未系约束、恐慌行为</span><span class="en">Door misuse, unrestrained occupant, panic</span></td><td class="lvl-b"><span class="cn">危险</span><span class="en">Hazardous</span></td><td><span class="cn">SG-08 座舱防呆设计与状态联锁</span><span class="en">SG-08 Poka-yoke cabin design and interlocks</span></td></tr>
+          <tr><td class="num">H-09</td><td><span class="cn">起降场地侵入 / 地面人员风险</span><span class="en">Landing-area intrusion / third-party risk</span></td><td><span class="cn">净空管理失效、围观人员进入</span><span class="en">Failed area control, bystanders entering</span></td><td class="lvl-b"><span class="cn">危险</span><span class="en">Hazardous</span></td><td><span class="cn">SG-09 起降区物理隔离与地面程序</span><span class="en">SG-09 Physical segregation and ground procedures</span></td></tr>
+          <tr><td class="num">H-10</td><td><span class="cn">维护差错 / 构型状态错误</span><span class="en">Maintenance error / wrong configuration</span></td><td><span class="cn">桨叶安装错误、软件版本错配、电池未锁止</span><span class="en">Wrong blade fit, software mismatch, unlatched battery</span></td><td class="lvl-b"><span class="cn">危险</span><span class="en">Hazardous</span></td><td><span class="cn">SG-10 防呆、构型记录与放行检查</span><span class="en">SG-10 Poka-yoke, configuration records, release checks</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small"><span class="cn">严酷度分级参照 ARP4761 的定性等级（灾难性 / 危险 / 较大 / 较小 / 无安全影响）与课件第五章的"10⁻⁹"体系对照<sup><a class="cite" href="#r18">[18]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>；本表为教学推演（E4），不对应实际 DAL 分配或审定结论。</span><span class="en">Severity classes follow the qualitative ARP4761 scale and Chapter 5's 10⁻⁹ system comparison [18][21]. Teaching exercise only (E4).</span></p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 2 / Figure 2</span><span class="en">Figure 2</span></span>
+      <div class="matrix-wrap">
+        <div class="matrix center" role="table" aria-label="风险评估矩阵">
+          <div class="mh"><span class="cn">严酷度 \ 可能性</span><span class="en">Severity \ Likelihood</span></div>
+          <div class="mh"><span class="cn">极不可能</span><span class="en">Extremely improbable</span></div>
+          <div class="mh"><span class="cn">不可能</span><span class="en">Improbable</span></div>
+          <div class="mh"><span class="cn">可能</span><span class="en">Probable</span></div>
+          <div class="mh"><span class="cn">频繁</span><span class="en">Frequent</span></div>
+
+          <div class="rowhead"><span class="cn">灾难性 Catastrophic</span><span class="en">Catastrophic</span></div>
+          <div class="m2">H-01 H-02</div><div class="m3">H-03</div><div class="m4"><span class="cn">不可接受</span><span class="en">Unacceptable</span></div><div class="m4"><span class="cn">不可接受</span><span class="en">Unacceptable</span></div>
+
+          <div class="rowhead"><span class="cn">危险 Hazardous</span><span class="en">Hazardous</span></div>
+          <div class="m1">H-06 H-10</div><div class="m2">H-04 H-07</div><div class="m3">H-05 H-09</div><div class="m4"><span class="cn">不可接受</span><span class="en">Unacceptable</span></div>
+
+          <div class="rowhead"><span class="cn">较大 Major</span><span class="en">Major</span></div>
+          <div class="m0">—</div><div class="m1">H-08</div><div class="m2">—</div><div class="m3">—</div>
+
+          <div class="rowhead"><span class="cn">较小 / 无安全影响</span><span class="en">Minor / no safety effect</span></div>
+          <div class="m0">—</div><div class="m0">—</div><div class="m1">—</div><div class="m2">—</div>
+        </div>
+      </div>
+      <figcaption><span class="cn">图 2　教学用风险矩阵。色阶由浅至深表示风险由可接受向不可接受过渡；危害编号对应表 3，落点为本文定性判断（E4），<strong>不代表实际概率数据</strong>。矩阵结构参照课件第五章与 ARP4761 的定性思路<sup><a class="cite" href="#r18">[18]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>。</span><span class="en">Figure 2 · Teaching risk matrix. Hazard IDs refer to Table 3; positions are qualitative judgements (E4), not probability data.</span></figcaption>
+    </figure>
+
+    <h3><span class="cn">3.1　STPA 视角：把"没有遵守"改成"控制动作不安全"</span><span class="en">3.1 An STPA view: unsafe control actions, not component failures</span></h3>
+    <p class="cn">课件以 STPA 控制结构分析自动驾驶系统，强调控制动作（Control Action）与反馈（Feedback）在系统层级上的交互<sup><a class="cite" href="#r21">[21]</a></sup>。对 EH216-S，这一视角尤其重要：许多风险并非来自部件坏了，而是来自<strong>控制动作在不该发出时发出、该发出时未发出、或发出过早/过晚/持续过久</strong>——例如地面调度在气象已越界时仍下发起飞许可、飞控在链路中断后继续执行旧航线、推力重构指令在传感器漂移下被错误触发。</p>
+    <p class="en">Chapter 5 uses an STPA control structure with control actions and feedback [21]. Many risks here are unsafe control actions rather than component failures: a dispatch release issued after weather limits are exceeded, continued execution of a stale route after link loss, or thrust reconfiguration triggered by drifting sensors.</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 3 / Figure 3</span><span class="en">Figure 3</span></span>
+      <svg viewBox="0 0 800 300" role="img" aria-label="STPA 控制结构示意图">
+        <rect width="800" height="300" fill="#fff"/>
+        <text x="24" y="28" class="th">STPA 控制结构：机—地—网—管四域</text>
+        <text x="24" y="46" class="tm">Control structure with control actions and feedback (after Chapter 5, pp.59–60)</text>
+        <g>
+          <rect x="40" y="80" width="160" height="64" rx="2" class="box-soft"/>
+          <text x="120" y="106" class="th" text-anchor="middle" font-size="12">运行域 / ODC</text>
+          <text x="120" y="126" class="tm" text-anchor="middle">气象 · 空域 · 场地 · 法规</text>
+        </g>
+        <g>
+          <rect x="240" y="80" width="160" height="64" rx="2" class="box-blue"/>
+          <text x="320" y="106" class="th" text-anchor="middle" font-size="12">地面调度中心</text>
+          <text x="320" y="126" class="tm" text-anchor="middle">放行 · 监控 · 应急决策</text>
+        </g>
+        <g>
+          <rect x="440" y="80" width="160" height="64" rx="2" class="box-deep"/>
+          <text x="520" y="106" class="tw" text-anchor="middle" font-size="12">机载飞控系统</text>
+          <text x="520" y="126" class="tw" text-anchor="middle" font-size="10" opacity="0.85">感知 · 决策 · 控制</text>
+        </g>
+        <g>
+          <rect x="640" y="80" width="136" height="64" rx="2" class="box"/>
+          <text x="708" y="106" class="ts" text-anchor="middle">飞行器平台</text>
+          <text x="708" y="126" class="tm" text-anchor="middle">16 动力单元 / 座舱</text>
+        </g>
+        <!-- control actions -->
+        <g class="arrow" stroke-width="1.6">
+          <line x1="400" y1="106" x2="436" y2="106"/><polyline points="430,101 436,106 430,111" fill="none"/>
+          <line x1="600" y1="106" x2="636" y2="106"/><polyline points="630,101 636,106 630,111" fill="none"/>
+        </g>
+        <g class="tm" text-anchor="middle"><text x="418" y="98">控制动作</text><text x="618" y="98">控制动作</text></g>
+        <!-- feedback -->
+        <g class="line-d" stroke="#8fa2aa">
+          <line x1="636" y1="132" x2="600" y2="132"/><line x1="436" y1="132" x2="400" y2="132"/>
+        </g>
+        <g class="tm" text-anchor="middle"><text x="618" y="150">反馈</text><text x="418" y="150">反馈</text></g>
+        <!-- constraints -->
+        <g class="line-d" stroke="#b08a5a">
+          <line x1="120" y1="148" x2="120" y2="196"/><line x1="120" y1="196" x2="708" y2="196"/>
+        </g>
+        <rect x="250" y="182" width="300" height="28" rx="2" class="box-warn"/>
+        <text x="400" y="201" class="ts" text-anchor="middle">外部约束：适航基础 · 空域规则 · 运行规范</text>
+        <!-- loss paths -->
+        <g>
+          <rect x="40" y="230" width="736" height="46" rx="2" class="box-risk"/>
+          <text x="56" y="250" class="ts" fill="#8a3331">不安全控制动作示例：</text>
+          <text x="56" y="268" class="tm">① 气象越界仍下发起飞许可　② 链路中断后继续执行旧航线　③ 传感器漂移触发错误推力重构　④ 乘客约束未确认即解锁动力</text>
+        </g>
+      </svg>
+      <figcaption><span class="cn">图 3　STPA 控制结构教学示意，依据课件第五章第 59—60 页的自动驾驶系统控制结构改写为四域结构<sup><a class="cite" href="#r21">[21]</a></sup>（E4）。</span><span class="en">Figure 3 · STPA control structure adapted from Chapter 5, pp.59–60 to a four-domain structure [21] (E4).</span></figcaption>
+    </figure>
+
+    <!-- ============ 04 功能安全 ============ -->
+    <h2 id="fusa"><span class="h2-num">SECTION 04</span><span class="cn">功能安全与失效分析</span><span class="en">Functional Safety and Failure Analysis</span></h2>
+
+    <p class="cn">课件把功能安全定义为"降低电子电气故障带来的安全风险"：通过安全分析、ASIL 分解与安全机制，使系统在足够短的时间内探测到危害事件并回到安全状态，把新增 E/E 功能带来的风险降到可接受范围<sup><a class="cite" href="#r21">[21]</a></sup>。在航空侧，对应的是 ARP4754A 的研制保证体系与 ARP4761 的 FHA / PSSA / SSA 安全性评估流程<sup><a class="cite" href="#r18">[18]</a></sup>。本节把两者并列使用：<strong>汽车侧提供"故障—安全机制"的思路，航空侧提供"自上而下、逐层分解"的证据结构</strong>。</p>
+    <p class="en">Chapter 5 defines functional safety as reducing risk from E/E failures through safety analysis, ASIL decomposition and safety mechanisms that bring the system to a safe state in time [21]. On the aviation side, ARP4754A development assurance and ARP4761 FHA/PSSA/SSA provide a top-down evidence structure [18].</p>
+
+    <div class="flow" aria-label="航空安全性评估流程">
+      <div><span class="step-n">STEP 01</span><strong><span class="cn">FHA 功能危害性评估</span><span class="en">Functional Hazard Assessment</span></strong><p><span class="cn">自上而下识别功能失效状态与严酷度，形成顶层安全目标。</span><span class="en">Top-down identification of failure conditions and severity.</span></p></div>
+      <div><span class="step-n">STEP 02</span><strong><span class="cn">PSSA 初步系统安全性评估</span><span class="en">Preliminary System Safety Assessment</span></strong><p><span class="cn">把顶层目标分解到系统与组件，导出安全需求与 DAL。</span><span class="en">Allocates goals to systems/components; derives requirements and DAL.</span></p></div>
+      <div><span class="step-n">STEP 03</span><strong><span class="cn">SSA 系统安全性评估</span><span class="en">System Safety Assessment</span></strong><p><span class="cn">自下而上验证实现是否满足需求，含 FTA / FMEA / CCA 证据。</span><span class="en">Bottom-up verification with FTA, FMEA and CCA evidence.</span></p></div>
+      <div><span class="step-n">STEP 04</span><strong><span class="cn">CCA 共因分析</span><span class="en">Common Cause Analysis</span></strong><p><span class="cn">检验冗余通道是否会被单一原因同时击穿。</span><span class="en">Checks whether one cause can defeat all redundant channels.</span></p></div>
+    </div>
+    <p class="small"><span class="cn">图 4　ARP4761 安全性评估流程与共因分析，依据课件第五章"全机系统安全性分析 SSA、FHA、FTA"与民航安全分析方法整理<sup><a class="cite" href="#r18">[18]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>（E3/E4）。</span><span class="en">Figure 4 · ARP4761 safety assessment flow and common-cause analysis, after Chapter 5 and civil-aviation methods [18][21].</span></p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 5 / Figure 5</span><span class="en">Figure 5</span></span>
+      <svg viewBox="0 0 800 430" role="img" aria-label="丧失可控升力故障树">
+        <rect width="800" height="430" fill="#fff"/>
+        <text x="24" y="28" class="th">故障树（FTA）教学示意：顶事件「丧失可控升力 / 不可控下降」</text>
+        <text x="24" y="46" class="tm">Teaching fault tree — top event: loss of controlled lift (E4, unquantified)</text>
+        <!-- top -->
+        <rect x="290" y="62" width="220" height="42" rx="2" class="box-risk"/>
+        <text x="400" y="88" class="th" text-anchor="middle" fill="#8a3331">T0 丧失可控升力 / 不可控下降</text>
+        <!-- OR gate marker -->
+        <path d="M390 104 L410 104 L410 118 L390 118 Z" fill="none" stroke="#6d8792"/>
+        <text x="424" y="116" class="tnum">OR</text>
+        <line x1="400" y1="104" x2="400" y2="118" class="line"/>
+        <!-- mid boxes -->
+        <g>
+          <rect x="40" y="140" width="216" height="44" rx="2" class="box-warn"/>
+          <text x="148" y="167" class="ts" text-anchor="middle">M1 升力不足（推力/供电）</text>
+          <rect x="292" y="140" width="216" height="44" rx="2" class="box-warn"/>
+          <text x="400" y="167" class="ts" text-anchor="middle">M2 姿态/控制失效</text>
+          <rect x="544" y="140" width="216" height="44" rx="2" class="box-warn"/>
+          <text x="652" y="167" class="ts" text-anchor="middle">M3 外部与运行条件</text>
+        </g>
+        <g class="line">
+          <line x1="400" y1="118" x2="148" y2="140"/><line x1="400" y1="118" x2="400" y2="140"/><line x1="400" y1="118" x2="652" y2="140"/>
+        </g>
+        <!-- branch labels -->
+        <g class="tnum" text-anchor="middle"><text x="148" y="202">OR</text><text x="400" y="202">OR</text><text x="652" y="202">OR</text></g>
+        <!-- bottom events -->
+        <g class="box-soft">
+          <rect x="24" y="216" width="112" height="52" rx="2"/><rect x="144" y="216" width="112" height="52" rx="2"/>
+          <rect x="264" y="216" width="112" height="52" rx="2"/><rect x="384" y="216" width="112" height="52" rx="2"/>
+          <rect x="504" y="216" width="112" height="52" rx="2"/><rect x="624" y="216" width="112" height="52" rx="2"/>
+        </g>
+        <g class="ts" text-anchor="middle" font-size="10.5">
+          <text x="80" y="238">E1 电机/ESC 失效</text><text x="80" y="255">E2 桨叶损伤</text>
+          <text x="200" y="238">E3 电池组失效</text><text x="200" y="255">E4 配电/热失控</text>
+          <text x="320" y="238">E5 飞控计算机失效</text><text x="320" y="255">E6 控制律/软件错误</text>
+          <text x="440" y="238">E7 IMU/GNSS 错误</text><text x="440" y="255">E8 传感器共模</text>
+          <text x="560" y="238">E9 风切变/极端气象</text><text x="560" y="255">E10 鸟撞/外来物</text>
+          <text x="680" y="238">E11 链路中断</text><text x="680" y="255">E12 航线数据错误</text>
+        </g>
+        <g class="line">
+          <line x1="148" y1="184" x2="80" y2="216"/><line x1="148" y1="184" x2="200" y2="216"/>
+          <line x1="400" y1="184" x2="320" y2="216"/><line x1="400" y1="184" x2="440" y2="216"/>
+          <line x1="652" y1="184" x2="560" y2="216"/><line x1="652" y1="184" x2="680" y2="216"/>
+        </g>
+        <!-- AND note -->
+        <g>
+          <rect x="24" y="292" width="752" height="52" rx="2" class="box-blue"/>
+          <text x="40" y="313" class="ts">关键教学点：单点失效 ≠ 顶事件</text>
+          <text x="40" y="333" class="tm">"任一动力单元失效"必须经 AND 门与"推力重构失效 / 剩余升力不足"组合才导出顶事件；这正是全备份设计的价值所在。</text>
+        </g>
+        <g>
+          <rect x="24" y="354" width="752" height="52" rx="2" class="box-risk"/>
+          <text x="40" y="375" class="ts" fill="#8a3331">共因警告（CCA）：冗余通道若共用同一电源、同一时钟源、同一软件版本或同一安装工艺，单一原因即可同时击穿多路。</text>
+          <text x="40" y="395" class="tm">Common cause: shared power, clock, software build or installation procedure can defeat all channels at once.</text>
+        </g>
+      </svg>
+      <figcaption><span class="cn">图 5　顶事件为"丧失可控升力"的教学故障树（E4）。门逻辑与底事件为示意，<strong>未做定量概率计算</strong>；结构参照课件第五章 FTA / CCA / SSA 方法集<sup><a class="cite" href="#r21">[21]</a></sup>与 ARP4761<sup><a class="cite" href="#r18">[18]</a></sup>。</span><span class="en">Figure 5 · Teaching fault tree with unquantified gates (E4), structured after Chapter 5's FTA/CCA/SSA method set [21] and ARP4761 [18].</span></figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 4　教学用 FMEA 片段（Table 4 · Indicative FMEA excerpt）</span><span class="en">Table 4 · Indicative FMEA excerpt</span></caption>
+        <thead><tr><th><span class="cn">部件 / 功能</span><span class="en">Item / function</span></th><th><span class="cn">失效模式</span><span class="en">Failure mode</span></th><th><span class="cn">局部影响</span><span class="en">Local effect</span></th><th><span class="cn">整机影响</span><span class="en">Aircraft effect</span></th><th><span class="cn">检测手段</span><span class="en">Detection</span></th><th><span class="cn">安全措施</span><span class="en">Mitigation</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">电机 / 电调</span><span class="en">Motor / ESC</span></td><td><span class="cn">停转、输出饱和</span><span class="en">Stall, saturated output</span></td><td><span class="cn">单个升力点丧失</span><span class="en">Loss of one lift point</span></td><td><span class="cn">升力不对称</span><span class="en">Asymmetric lift</span></td><td><span class="cn">转速/电流/温度监测</span><span class="en">RPM, current, temperature</span></td><td><span class="cn">对角单元推力重构</span><span class="en">Thrust reallocation</span></td></tr>
+          <tr><td><span class="cn">旋翼 / 桨叶</span><span class="en">Rotor / blade</span></td><td><span class="cn">裂纹、脱落、异物撞击</span><span class="en">Crack, detachment, FOD</span></td><td><span class="cn">升力骤降、振动</span><span class="en">Lift drop, vibration</span></td><td><span class="cn">姿态扰动</span><span class="en">Attitude disturbance</span></td><td><span class="cn">振动监测、目视检查</span><span class="en">Vibration monitoring, inspection</span></td><td><span class="cn">冗余构型、定寿更换</span><span class="en">Redundancy, life limits</span></td></tr>
+          <tr><td><span class="cn">动力电池组</span><span class="en">Battery pack</span></td><td><span class="cn">单体失效、热失控</span><span class="en">Cell failure, thermal runaway</span></td><td><span class="cn">该组供电中断</span><span class="en">Loss of one power group</span></td><td><span class="cn">可用功率下降</span><span class="en">Reduced available power</span></td><td><span class="cn">BMS 电压/温度/压差</span><span class="en">BMS voltage / temperature</span></td><td><span class="cn">分区隔离、阻燃、提前着陆</span><span class="en">Partitioning, containment, landing</span></td></tr>
+          <tr><td><span class="cn">飞控计算机</span><span class="en">Flight-control computer</span></td><td><span class="cn">宕机、错误输出</span><span class="en">Crash, erroneous output</span></td><td><span class="cn">控制指令异常</span><span class="en">Abnormal command</span></td><td><span class="cn">姿态/轨迹失控</span><span class="en">Loss of control</span></td><td><span class="cn">通道比对、看门狗</span><span class="en">Channel comparison, watchdog</span></td><td><span class="cn">2oo3 表决、异构冗余</span><span class="en">2oo3 voting, dissimilar redundancy</span></td></tr>
+          <tr><td><span class="cn">组合导航</span><span class="en">GNSS / IMU</span></td><td><span class="cn">失锁、多路径、漂移</span><span class="en">Loss of lock, multipath, drift</span></td><td><span class="cn">位置/姿态估计偏差</span><span class="en">State estimation error</span></td><td><span class="cn">航线偏离</span><span class="en">Route deviation</span></td><td><span class="cn">多源一致性检查</span><span class="en">Multi-source consistency</span></td><td><span class="cn">地理围栏、备降逻辑</span><span class="en">Geofence, divert logic</span></td></tr>
+          <tr><td><span class="cn">通信链路</span><span class="en">Data link</span></td><td><span class="cn">中断、时延、伪造</span><span class="en">Loss, latency, spoofing</span></td><td><span class="cn">地面指令不可达</span><span class="en">Ground command unavailable</span></td><td><span class="cn">监控与应急能力下降</span><span class="en">Reduced monitoring</span></td><td><span class="cn">心跳、完整性校验</span><span class="en">Heartbeat, integrity check</span></td><td><span class="cn">双链路、机载自主应急</span><span class="en">Dual link, on-board contingency</span></td></tr>
+          <tr><td><span class="cn">高压配电</span><span class="en">HV distribution</span></td><td><span class="cn">短路、绝缘下降</span><span class="en">Short circuit, insulation loss</span></td><td><span class="cn">多通道同时掉电</span><span class="en">Multi-channel power loss</span></td><td><span class="cn">灾难性风险</span><span class="en">Catastrophic potential</span></td><td><span class="cn">绝缘监测、高压互锁</span><span class="en">Insulation monitoring, HVIL</span></td><td><span class="cn">分区供电、物理隔离（CCA）</span><span class="en">Segregation, physical separation</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small"><span class="cn">FMEA 维度参照课件第五章组件安全分析（FMEA / FTA / FMEDA / CAE）与安全机制清单（绝缘防护、短路保护、供电保护、高压互锁、故障检测）<sup><a class="cite" href="#r21">[21]</a></sup>；内容为教学推演（E4）。</span><span class="en">FMEA columns follow Chapter 5's component analysis and safety-mechanism list [21]; content is a teaching exercise (E4).</span></p>
+
+    <div class="callout">
+      <strong><span class="cn">失效—安全 还是 失效—运行？</span><span class="en">Fail-safe or fail-operational?</span></strong>
+      <p class="cn">地面车辆在严重故障时通常允许"安全停车"（fail-safe / fail-shutdown）；但载人航空器在巡航阶段<strong>没有"靠边停车"这一选项</strong>，必须在故障后继续维持可控飞行直到着陆（fail-operational）。课件在典型 ADS 功能表中也区分了 L2+ 的 fail-shutdown 与 L3 的 fail-operational<sup><a class="cite" href="#r21">[21]</a></sup>。这一差异是 EH216-S 必须采用全备份动力、多组电池与推力重构逻辑的根本原因，也是其安全架构区别于车规设计的核心。</p>
+      <p class="en">A road vehicle may safely stop after a severe failure; a passenger aircraft in flight has no "pull over" option and must remain controllable until landing (fail-operational). Chapter 5 makes the same distinction between L2+ fail-shutdown and L3 fail-operational [21]. This is the root reason for full propulsion redundancy and thrust reallocation.</p>
+    </div>
+
+    <!-- ============ 05 SOTIF ============ -->
+    <h2 id="sotif"><span class="h2-num">SECTION 05</span><span class="cn">预期功能安全 SOTIF</span><span class="en">Safety of the Intended Functionality (SOTIF)</span></h2>
+
+    <p class="cn">课件第五章指出："处理了 E/E 故障，就安全了么？"——每一次接管，都可能是一次交通事故。加州 DMV 接管报告所列原因包括环境感知能力不足、决策逻辑问题、车载软硬件故障、数据传输迟滞、GPS 定位与传感器配合、环境复杂度超出能力等，其中相当一部分<strong>并非故障，而是功能在既定场景下表现不足</strong><sup><a class="cite" href="#r21">[21]</a></sup>。ISO 21448 把这类风险定义为"由于性能局限及人为误用带来的风险"<sup><a class="cite" href="#r14">[14]</a></sup>。</p>
+    <p class="en">Chapter 5 asks: does handling E/E failures make a system safe? Disengagement reports cite perception limits, decision logic, latency, GPS and sensor coordination, and environmental complexity — many are performance insufficiencies rather than failures [21]. ISO 21448 addresses risks from performance limitations and reasonably foreseeable misuse [14].</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 6 / Figure 6</span><span class="en">Figure 6</span></span>
+      <svg viewBox="0 0 800 336" role="img" aria-label="SOTIF 四象限示意图">
+        <rect width="800" height="336" fill="#fff"/>
+        <text x="24" y="28" class="th">SOTIF 四象限：把"未知不安全"转化为"已知安全"</text>
+        <text x="24" y="46" class="tm">Four SOTIF areas and the validation-driven reduction path (ISO 21448 framing)</text>
+        <!-- axes -->
+        <line x1="80" y1="70" x2="80" y2="280" class="line" stroke="#8fa2aa" stroke-width="1.4"/>
+        <line x1="80" y1="280" x2="760" y2="280" class="line" stroke="#8fa2aa" stroke-width="1.4"/>
+        <line x1="420" y1="70" x2="420" y2="280" class="line-d" stroke="#c3ced2"/>
+        <line x1="80" y1="175" x2="760" y2="175" class="line-d" stroke="#c3ced2"/>
+        <!-- quadrant fills -->
+        <rect x="81" y="71" width="338" height="103" fill="#eef5f0"/>
+        <rect x="421" y="71" width="338" height="103" fill="#f5f5f7"/>
+        <rect x="81" y="176" width="338" height="103" fill="#faf3e9"/>
+        <rect x="421" y="176" width="338" height="103" fill="#faf0ef"/>
+        <!-- labels -->
+        <g class="th" text-anchor="middle">
+          <text x="250" y="112" fill="#356b52">Area 1 · 已知安全</text>
+          <text x="590" y="112" fill="#5b6770">Area 4 · 未知安全</text>
+          <text x="250" y="216" fill="#87531f">Area 2 · 已知不安全</text>
+          <text x="590" y="216" fill="#8a3331">Area 3 · 未知不安全</text>
+        </g>
+        <g class="tm" text-anchor="middle">
+          <text x="250" y="134">标称运行、已验证场景</text>
+          <text x="590" y="134">尚未暴露但当前无害</text>
+          <text x="250" y="238">已识别的性能局限，需改进或施加 ODC 约束</text>
+          <text x="590" y="238">低空气象、GNSS 多路径、链路时延、乘客误用</text>
+        </g>
+        <!-- arrows -->
+        <g class="arrow" stroke-width="1.6">
+          <line x1="590" y1="258" x2="250" y2="258"/><polyline points="258,253 250,258 258,263" fill="none"/>
+          <line x1="250" y1="192" x2="250" y2="160"/><polyline points="245,167 250,160 255,167" fill="none"/>
+        </g>
+        <text x="420" y="273" class="tnum" text-anchor="middle">场景化验证 → 触发条件识别</text>
+        <text x="268" y="176" class="tnum" text-anchor="start">改进 / ODC 约束</text>
+        <!-- axis labels -->
+        <text x="420" y="306" class="tm" text-anchor="middle">已知 Known ← 场景知识程度 → 未知 Unknown</text>
+        <text x="30" y="175" class="tm" transform="rotate(-90 30 175)" text-anchor="middle">安全 Safe ← 危害程度 → 不安全 Unsafe</text>
+      </svg>
+      <figcaption><span class="cn">图 6　SOTIF 四象限与削减路径，依据 ISO 21448 框架与课件第五章第 71—73 页整理<sup><a class="cite" href="#r14">[14]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>（E3/E4）。EH216-S 的主要开放风险集中在 Area 3。</span><span class="en">Figure 6 · SOTIF four areas and reduction path, after ISO 21448 and Chapter 5, pp.71–73 [14][21]. The main open risks sit in Area 3.</span></figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 5　SOTIF 触发条件与验证策略（Table 5 · Triggering conditions and validation strategy）</span><span class="en">Table 5 · Triggering conditions and validation strategy</span></caption>
+        <thead><tr><th><span class="cn">触发条件类别</span><span class="en">Trigger category</span></th><th><span class="cn">具体情形</span><span class="en">Concrete condition</span></th><th><span class="cn">影响</span><span class="en">Effect</span></th><th><span class="cn">削减措施</span><span class="en">Reduction measure</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">气象与环境</span><span class="en">Weather</span></td><td><span class="cn">雷暴、强风切变、大雨、低能见度、结冰、高温/低温</span><span class="en">Thunderstorm, shear, heavy rain, low visibility, icing, temperature extremes</span></td><td><span class="cn">升力裕度下降、控制精度下降、传感器退化</span><span class="en">Reduced lift margin, control accuracy and sensing</span></td><td><span class="cn">ODC 硬约束、气象门槛、起飞前与航中监测、备降</span><span class="en">Hard ODC limits, weather minima, pre-flight and en-route monitoring</span></td></tr>
+          <tr><td><span class="cn">导航与定位</span><span class="en">Navigation</span></td><td><span class="cn">城市峡谷多路径、GNSS 遮挡、电磁干扰、地图/航线数据陈旧</span><span class="en">Urban multipath, GNSS occlusion, EMI, stale route data</span></td><td><span class="cn">位置估计偏差、航线偏离</span><span class="en">Position error, route deviation</span></td><td><span class="cn">多源一致性、地理围栏、航线数据版本控制、备降逻辑</span><span class="en">Multi-source consistency, geofence, route data control</span></td></tr>
+          <tr><td><span class="cn">感知与避障</span><span class="en">Perception</span></td><td><span class="cn">鸟群、临时障碍物、其他低空飞行器、灯光与反光</span><span class="en">Birds, temporary obstacles, other aircraft, glare</span></td><td><span class="cn">碰撞风险</span><span class="en">Collision risk</span></td><td><span class="cn">隔离空域、场地净空管理、限速与中止逻辑</span><span class="en">Segregated airspace, area control, speed limits and abort</span></td></tr>
+          <tr><td><span class="cn">链路与调度</span><span class="en">Link &amp; dispatch</span></td><td><span class="cn">链路时延、间歇中断、地面指令排队、时钟不同步</span><span class="en">Latency, intermittent loss, command queuing, clock drift</span></td><td><span class="cn">监控失效、应急决策延迟</span><span class="en">Loss of monitoring, delayed contingency action</span></td><td><span class="cn">双链路、心跳与超时、机载自主应急逻辑</span><span class="en">Dual link, heartbeat/timeouts, on-board contingency logic</span></td></tr>
+          <tr><td><span class="cn">人为误用</span><span class="en">Foreseeable misuse</span></td><td><span class="cn">乘客误触舱门/急停、未系约束、恐慌移动、携带超限物品</span><span class="en">Door/emergency-stop misuse, unrestrained occupant, panic, oversized baggage</span></td><td><span class="cn">重心变化、舱门空中开启、应急复杂化</span><span class="en">CG shift, in-flight door opening, complicated evacuation</span></td><td><span class="cn">座舱防呆、状态联锁、乘员简报与视频提示</span><span class="en">Poka-yoke, interlocks, passenger briefing</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <strong><span class="cn">SOTIF 风险无法用冗余硬件消除</span><span class="en">Redundancy cannot remove SOTIF risk</span></strong>
+      <p class="cn">若三套飞控都基于同一套在强风下失效的控制律，或三套导航都受同一多路径环境干扰，则"三余度"对这类风险<strong>不提供任何保护</strong>。这也是课件把"低空复杂气象条件和高密度飞行的安全问题"列为无人驾驶技术最主要挑战的原因<sup><a class="cite" href="#r21">[21]</a></sup>。对应的手段只能是：把触发条件尽可能从 Area 3 挖掘到 Area 2，再通过设计改进或 ODC 约束把 Area 2 压到可接受范围，并用场景化测试证明残余风险可接受。</p>
+      <p class="en">If three flight-control channels share a control law that fails in strong wind, or three navigation sources share the same multipath environment, redundancy provides no protection. Only scenario discovery, design/ODC reduction and validation can address this [21].</p>
+    </div>
+
+    <!-- ============ 06 信息安全 ============ -->
+    <h2 id="security"><span class="h2-num">SECTION 06</span><span class="cn">信息安全与电磁兼容</span><span class="en">Cybersecurity and Electromagnetic Compatibility</span></h2>
+
+    <p class="cn">课件第五章把信息安全定义为"降低外部攻击带来的风险"，以 ISO/SAE 21434 为基础，在功能安全开发流程中加入<strong>威胁分析与风险评估（TARA）</strong>及验证过程<sup><a class="cite" href="#r17">[17]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>；并把"防止网络安全威胁、电磁攻击与侵入"列为飞行汽车设计阶段必须考虑的项目之一<sup><a class="cite" href="#r21">[21]</a></sup>。对无人驾驶构型，信息安全不是附加功能，而是<strong>功能安全的前置条件</strong>：一条被伪造的放行指令，等价于一个安全关键的错误控制动作。</p>
+    <p class="en">Chapter 5 defines cybersecurity as reducing risk from external attacks through ISO/SAE 21434 and TARA integrated into the safety lifecycle [17][21], and lists protection against cyber threats, electromagnetic attacks and intrusions among design-stage considerations. For a pilotless aircraft, a forged dispatch command is equivalent to an unsafe control action.</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 6　教学用 TARA 威胁清单（Table 6 · Indicative threat analysis and risk assessment）</span><span class="en">Table 6 · Indicative threat analysis and risk assessment</span></caption>
+        <thead><tr><th><span class="cn">资产 / Asset</span><span class="en">Asset</span></th><th><span class="cn">威胁 / Threat</span><span class="en">Threat</span></th><th><span class="cn">安全影响</span><span class="en">Safety impact</span></th><th><span class="cn">防护措施</span><span class="en">Countermeasure</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">指挥链路</span><span class="en">Command link</span></td><td><span class="cn">中间人攻击、重放、伪造指令、拒绝服务</span><span class="en">MitM, replay, command forgery, DoS</span></td><td class="lvl-a"><span class="cn">灾难性</span><span class="en">Catastrophic</span></td><td><span class="cn">双向认证、消息完整性、序列号与时效、密钥管理</span><span class="en">Mutual authentication, integrity, sequence/freshness, key management</span></td></tr>
+          <tr><td><span class="cn">地面调度中心</span><span class="en">Ground control centre</span></td><td><span class="cn">账号劫持、内部越权、终端入侵</span><span class="en">Account takeover, insider abuse, endpoint compromise</span></td><td class="lvl-a"><span class="cn">灾难性</span><span class="en">Catastrophic</span></td><td><span class="cn">最小权限、双人复核、操作审计、网络分区</span><span class="en">Least privilege, two-person rule, audit, segmentation</span></td></tr>
+          <tr><td><span class="cn">导航信号</span><span class="en">Navigation signals</span></td><td><span class="cn">GNSS 欺骗 / 压制干扰</span><span class="en">GNSS spoofing / jamming</span></td><td class="lvl-b"><span class="cn">危险</span><span class="en">Hazardous</span></td><td><span class="cn">多源融合、异常检测、地理围栏、惯性导航保持</span><span class="en">Multi-source fusion, anomaly detection, geofence, inertial hold</span></td></tr>
+          <tr><td><span class="cn">航线与软件数据</span><span class="en">Route &amp; software data</span></td><td><span class="cn">航线库篡改、软件版本错配、更新包投毒</span><span class="en">Route database tampering, version mismatch, poisoned update</span></td><td class="lvl-a"><span class="cn">灾难性</span><span class="en">Catastrophic</span></td><td><span class="cn">签名校验、构型记录、受控更新流程、放行检查</span><span class="en">Signature verification, configuration records, controlled updates</span></td></tr>
+          <tr><td><span class="cn">机载总线与接口</span><span class="en">On-board bus &amp; ports</span></td><td><span class="cn">维护接口未授权访问、调试端口暴露</span><span class="en">Unauthorised maintenance access, exposed debug ports</span></td><td class="lvl-b"><span class="cn">危险</span><span class="en">Hazardous</span></td><td><span class="cn">接口封闭、访问控制、维护日志</span><span class="en">Port closure, access control, maintenance logging</span></td></tr>
+          <tr><td><span class="cn">运行数据</span><span class="en">Operational data</span></td><td><span class="cn">飞行数据泄露、记录被篡改影响事件调查</span><span class="en">Data leakage, tampered records impairing investigation</span></td><td class="lvl-b"><span class="cn">较大</span><span class="en">Major</span></td><td><span class="cn">只读记录、完整性保护、留存策略</span><span class="en">Write-once records, integrity protection, retention policy</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small"><span class="cn">TARA 结构参照 ISO/SAE 21434 与课件第五章第 75 页<sup><a class="cite" href="#r17">[17]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>；电磁环境试验要求可对应 RTCA DO-160G<sup><a class="cite" href="#r19">[19]</a></sup>。本表为教学推演（E4）。</span><span class="en">TARA structure follows ISO/SAE 21434 and Chapter 5, p.75 [17][21]; environmental/EMC test considerations map to RTCA DO-160G [19]. Teaching exercise (E4).</span></p>
+
+    <div class="callout note">
+      <strong><span class="cn">电磁兼容为什么属于安全而非"体验"问题</span><span class="en">Why EMC is a safety issue, not a comfort issue</span></strong>
+      <p class="cn">课件把"信息安全与电磁兼容"并列为飞行汽车潜在研究点之一<sup><a class="cite" href="#r21">[21]</a></sup>。城市低空环境中存在密集的通信基站、广播发射与高压设施；强电磁场可能同时影响导航接收、链路与传感器，形成典型的<strong>共因干扰</strong>。因此 CCA 不仅要覆盖硬件共因，也要覆盖"同一电磁环境同时作用于多个冗余通道"的情形。</p>
+      <p class="en">Chapter 5 lists cybersecurity and EMC together as research topics [21]. Dense urban electromagnetic environments can affect navigation, links and sensors simultaneously — a common-cause disturbance that CCA must cover alongside hardware common causes.</p>
+    </div>
+
+    <!-- ============ 07 被动安全 ============ -->
+    <h2 id="passive"><span class="h2-num">SECTION 07</span><span class="cn">被动安全与多维碰撞安全</span><span class="en">Passive Safety and Multi-dimensional Crashworthiness</span></h2>
+
+    <p class="cn">课件在"飞行汽车安全方面有哪些潜在研究点"中明确列出<strong>主被动碰撞安全</strong>，并引用综述论文的设计阶段考虑：碰撞/避障与考虑纵向、横向、垂直三个方向的多维碰撞适撞性（multi-dimensional crashworthiness）、飞行中火灾与车辆控制失效的应对措施、极端气象鲁棒性、驾驶员应急训练、以及网络与电磁攻击防护<sup><a class="cite" href="#r15">[15]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>。地面车辆以纵向碰撞为主，飞行汽车则必须把<strong>垂直方向</strong>作为首要设计工况。</p>
+    <p class="en">Chapter 5 identifies active and passive crashworthiness as a research topic, and cites design-stage considerations including multi-dimensional crashworthiness across longitudinal, lateral and vertical crashes, in-flight fire, control failure, extreme weather, pilot training and cyber/EM protection [15][21].</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 7 / Figure 7</span><span class="en">Figure 7</span></span>
+      <svg viewBox="0 0 800 290" role="img" aria-label="多维碰撞方向与能量量级示意">
+        <rect width="800" height="290" fill="#fff"/>
+        <text x="24" y="28" class="th">多维碰撞：飞行汽车与地面车辆的工况差异</text>
+        <text x="24" y="46" class="tm">Multi-dimensional crashworthiness: vertical impact is the primary design case (teaching schematic, E4)</text>
+        <!-- cabin -->
+        <rect x="330" y="100" width="140" height="100" rx="34" class="box-deep"/>
+        <text x="400" y="146" class="tw" text-anchor="middle">座舱</text>
+        <text x="400" y="166" class="tw" text-anchor="middle" font-size="10" opacity="0.85">Cabin</text>
+        <rect x="358" y="196" width="84" height="20" rx="4" fill="#9fb0b7"/>
+        <text x="400" y="210" class="tnum" text-anchor="middle" fill="#102d3c">吸能结构</text>
+        <!-- arrows -->
+        <g class="arrow" stroke-width="2">
+          <line x1="240" y1="150" x2="322" y2="150"/><polyline points="313,145 322,150 313,155" fill="none"/>
+          <line x1="560" y1="150" x2="478" y2="150"/><polyline points="487,145 478,150 487,155" fill="none"/>
+          <line x1="400" y1="250" x2="400" y2="222"/><polyline points="395,231 400,222 405,231" fill="none"/>
+        </g>
+        <g class="ts" text-anchor="middle">
+          <text x="240" y="136">纵向 / Longitudinal</text>
+          <text x="586" y="136">横向 / Lateral</text>
+          <text x="400" y="272" fill="#8a3331">垂直 / Vertical（主导工况）</text>
+        </g>
+        <g class="tm" text-anchor="middle">
+          <text x="240" y="170">地面车辆主工况</text><text x="586" y="170">侧撞 / 侧翻</text>
+        </g>
+        <!-- energy box -->
+        <g>
+          <rect x="40" y="80" width="176" height="112" rx="2" class="box-soft"/>
+          <text x="56" y="104" class="th" font-size="12">量级估算（教学）</text>
+          <text x="56" y="128" class="ts">E = m · g · h</text>
+          <text x="56" y="150" class="tm">m ≈ 620 kg, h ≈ 20 m</text>
+          <text x="56" y="170" class="ts" fill="#8a3331">E ≈ 1.2 × 10⁵ J</text>
+        </g>
+        <g>
+          <rect x="600" y="80" width="176" height="112" rx="2" class="box-soft"/>
+          <text x="616" y="104" class="th" font-size="12">设计含义</text>
+          <text x="616" y="128" class="tm">吸能结构 / 座椅约束</text>
+          <text x="616" y="148" class="tm">电池防火与隔离</text>
+          <text x="616" y="168" class="tm">应急着陆与救援</text>
+        </g>
+        <text x="24" y="284" class="tm">高度与质量为公开口径与教学假设，仅用于说明能量量级；实际工况应以审定符合性试验为准 [7] (E4)。</text>
+      </svg>
+      <figcaption><span class="cn">图 7　多维碰撞方向与垂直冲击能量量级教学示意（E4）。能量估算采用公开 MTOW 口径 620 kg 与假设高度 20 m<sup><a class="cite" href="#r7">[7]</a></sup>，不代表实际审定工况。</span><span class="en">Figure 7 · Multi-dimensional impact directions and an indicative vertical-impact energy calculation (E4), using published MTOW and an assumed height [7].</span></figcaption>
+    </figure>
+
+    <div class="photo-strip">
+      <figure>
+        <img src="assets/img/nasa-impact-test-1.jpg" alt="NASA 兰利研究中心 eVTOL 结构坠撞试验，试验舱由索具吊起，内部安放假人">
+        <figcaption><span class="cn">垂直坠撞研究方法的公开示例：NASA 兰利研究中心 eVTOL 结构坠撞试验，试验舱由索具吊起，舱内安置测试假人以测量冲击响应。摄影：NASA Mark Knopp / NASA Langley Research Center，Public domain，Wikimedia Commons<sup><a class="cite" href="#r34">[34]</a></sup>。<strong>该图为通用研究设施，不是 EH216-S 产品或其试验</strong>，仅用于说明适撞性研究方法。</span><span class="en">Public example of vertical-impact research: NASA Langley eVTOL crash test with an instrumented test article and anthropomorphic dummies. Photo: NASA Mark Knopp, public domain [34]. Not an EH216-S test.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="assets/img/nasa-impact-test-2.jpg" alt="NASA 兰利研究中心 eVTOL 坠撞试验的另一帧试验舱与假人">
+        <figcaption><span class="cn">同一试验序列的另一帧，可见座舱开口、假人约束与机体表面测量标记。摄影：NASA Mark Knopp，Public domain，Wikimedia Commons<sup><a class="cite" href="#r35">[35]</a></sup>。图片说明"乘员约束 + 结构吸能 + 冲击测量"这一被动安全验证组合。</span><span class="en">Another frame of the same NASA test sequence, showing cabin opening, dummy restraints and surface measurement markers. Photo: NASA Mark Knopp, public domain [35].</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 7　被动安全措施清单（Table 7 · Passive safety measures）</span><span class="en">Table 7 · Passive safety measures</span></caption>
+        <thead><tr><th><span class="cn">对象</span><span class="en">Target</span></th><th><span class="cn">措施</span><span class="en">Measure</span></th><th><span class="cn">课件依据</span><span class="en">Course basis</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">乘员保护</span><span class="en">Occupant protection</span></td><td><span class="cn">座椅与约束系统、座舱结构完整性、防翻滚与防贯穿、应急出口与撤离程序</span><span class="en">Seats and restraints, cabin integrity, rollover/penetration protection, egress</span></td><td><span class="cn">第 68 页被动安全、NCAP 类比<sup><a class="cite" href="#r21">[21]</a></sup></span><span class="en">Ch.5, p.68</span></td></tr>
+          <tr><td><span class="cn">结构与吸能</span><span class="en">Structure &amp; energy absorption</span></td><td><span class="cn">滑橇/起落架吸能、座舱下部溃缩区、复合材料分层失效控制、振动与滚翻防护</span><span class="en">Skid energy absorption, crush zone, composite delamination control</span></td><td><span class="cn">第 87 页"振动/碰撞/滚翻防护"<sup><a class="cite" href="#r21">[21]</a></sup></span><span class="en">Ch.5, p.87</span></td></tr>
+          <tr><td><span class="cn">电池与火灾</span><span class="en">Battery &amp; fire</span></td><td><span class="cn">热失控预警、分区隔离、防火阻燃、防腐蚀、IP 防护、短路保护与高压互锁</span><span class="en">Thermal-runaway warning, partitioning, flame retardance, HVIL, IP protection</span></td><td><span class="cn">第 87 页组件安全机制<sup><a class="cite" href="#r21">[21]</a></sup></span><span class="en">Ch.5, p.87</span></td></tr>
+          <tr><td><span class="cn">空中火灾</span><span class="en">In-flight fire</span></td><td><span class="cn">火情探测、故障电池组电气隔离、优先着陆逻辑、地面消防预案</span><span class="en">Fire detection, pack isolation, priority landing, ground firefighting plan</span></td><td><span class="cn">第 78 页"对飞行中火灾的应对"<sup><a class="cite" href="#r21">[21]</a></sup></span><span class="en">Ch.5, p.78</span></td></tr>
+          <tr><td><span class="cn">第三方风险</span><span class="en">Third-party risk</span></td><td><span class="cn">起降区净空与物理隔离、安全间距、噪声与下洗流控制、地面人员程序</span><span class="en">Landing-area segregation, safety separation, downwash/noise control</span></td><td><span class="cn">第 39 页第三方风险模型、第 25 页选址约束<sup><a class="cite" href="#r21">[21]</a></sup></span><span class="en">Ch.5, pp.25, 39</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============ 08 行为安全 ============ -->
+    <h2 id="behavior"><span class="h2-num">SECTION 08</span><span class="cn">行为安全与人为因素</span><span class="en">Behavioural Safety and Human Factors</span></h2>
+
+    <p class="cn">课件把行为安全定义为"降低由于周围交通参与者交互带来的风险"，并以 IEEE P2846《安全相关自动化车辆行为假设》为例，列举安全距离、切入、路权、视野受限四类典型交互<sup><a class="cite" href="#r27">[27]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>。虽然 EH216-S 运行在隔离空域、不与其他交通参与者共享路权，但<strong>"人"并未从系统中消失，只是换了位置</strong>：地面调度操作员、维护放行人员、乘客、起降场管理人员、以及应急恢复人员，共同构成新的行为安全边界。</p>
+    <p class="en">Chapter 5 defines behavioural safety as reducing risk from interactions with other traffic participants, citing IEEE P2846 assumptions on safe distance, cut-in, right of way and limited visibility [27][21]. In segregated airspace the human is not removed but relocated: ground operators, maintenance release staff, passengers, site staff and recovery crews form the new behavioural boundary.</p>
+
+    <div class="cards three">
+      <div class="card accent"><span class="idx">HUMAN 01</span><h4><span class="cn">地面调度操作员</span><span class="en">Ground operator</span></h4><p><span class="cn">放行判断、多机监控、异常处置与应急决策；需明确资质、训练大纲、值班与复核机制，避免"一人多机"下的注意力稀释。</span><span class="en">Dispatch release, fleet monitoring, anomaly handling; requires licensing, training, duty and two-person review.</span></p><p class="foot"><span class="cn">对应课件第 78 页"人员训练"与第 30 页资质标准<sup><a class="cite" href="#r21">[21]</a></sup></span><span class="en">Ch.5, pp.30, 78</span></p></div>
+      <div class="card warn"><span class="idx">HUMAN 02</span><h4><span class="cn">乘客</span><span class="en">Passengers</span></h4><p><span class="cn">无驾驶员意味着没有机上权威角色。需通过防呆座舱、状态联锁、乘员简报与清晰的应急指示，降低误用与恐慌行为。</span><span class="en">No on-board authority figure: poka-yoke cabin, interlocks, briefing and clear emergency cues.</span></p><p class="foot"><span class="cn">对应 H-08 / SG-08</span><span class="en">H-08 / SG-08</span></p></div>
+      <div class="card risk"><span class="idx">HUMAN 03</span><h4><span class="cn">维护与放行人员</span><span class="en">Maintenance &amp; release</span></h4><p><span class="cn">桨叶安装、软件版本、电池锁止、构型记录任一环节出错都可能形成灾难性前置条件；需防呆设计、构型记录与独立放行检查。</span><span class="en">Blade fit, software build, battery latching and configuration records are catastrophic preconditions without poka-yoke and independent release checks.</span></p><p class="foot"><span class="cn">对应 H-10 / CCA</span><span class="en">H-10 / CCA</span></p></div>
+    </div>
+
+    <p class="cn">课件第 58 页引用 NHTSA 统计指出道路事故 90% 以上与人为因素有关，并判断自动化会显著降低事故率、但车辆自身导致的事故占比上升<sup><a class="cite" href="#r26">[26]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>。这一"风险转移"规律在本案例中同样成立：<strong>取消驾驶员减少了随机人为失误，却把人为因素集中到了少数高后果的地面岗位</strong>。因此行为安全的重点不是座舱 HMI，而是组织层面的程序、培训、资质与审计——这恰好回到 0 号过程"安全文化与安全管理"。</p>
+    <p class="en">Chapter 5 cites NHTSA (&gt;90% of crashes involve human factors) and notes that automation reduces overall crash rates while increasing the share caused by the vehicle itself [26][21]. Here human factors are concentrated into a few high-consequence ground roles; behavioural safety therefore centres on procedures, training, licensing and audit — step 0, safety culture and management.</p>
+
+    <!-- ============ 09 安全架构 ============ -->
+    <h2 id="architecture"><span class="h2-num">SECTION 09</span><span class="cn">安全需求与冗余架构</span><span class="en">Safety Requirements and Redundant Architecture</span></h2>
+
+    <p class="cn">课件第五章要求"三重冗余体系：飞控、能源、通信"，并把典型安全架构（1oo1、1oo2、2oo2、1oo3、2oo3、1oo2D）列为第 3 步的方法工具<sup><a class="cite" href="#r21">[21]</a></sup>。本节把表 3 的顶层安全目标向下分解为可验证的安全需求，并给出与公开构型一致的冗余架构教学示意。</p>
+    <p class="en">Chapter 5 calls for triple redundancy in flight control, energy and communications, and lists typical architectures (1oo1, 1oo2, 2oo2, 1oo3, 2oo3, 1oo2D) [21]. Top-level safety goals are decomposed below into verifiable requirements.</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 8 / Figure 8</span><span class="en">Figure 8</span></span>
+      <svg viewBox="0 0 800 320" role="img" aria-label="三重冗余安全架构教学示意">
+        <rect width="800" height="320" fill="#fff"/>
+        <text x="24" y="28" class="th">三重冗余架构：飞控 2oo3 · 能源分区 · 双链路 · 推力重构</text>
+        <text x="24" y="46" class="tm">Redundant architecture schematic (teaching exercise, E4; does not represent the approved design)</text>
+        <!-- flight control -->
+        <g>
+          <rect x="24" y="70" width="238" height="106" rx="2" class="box-blue"/>
+          <text x="40" y="92" class="th" font-size="12">① 飞控冗余 / 2oo3 表决</text>
+          <g><rect x="40" y="104" width="60" height="34" rx="2" class="box"/><rect x="110" y="104" width="60" height="34" rx="2" class="box"/><rect x="180" y="104" width="60" height="34" rx="2" class="box"/></g>
+          <g class="ts" text-anchor="middle" font-size="10"><text x="70" y="126">FCC-A</text><text x="140" y="126">FCC-B</text><text x="210" y="126">FCC-C</text></g>
+          <text x="40" y="160" class="tm">异构通道 + 通道比对 + 看门狗</text>
+        </g>
+        <!-- energy -->
+        <g>
+          <rect x="274" y="70" width="238" height="106" rx="2" class="box-blue"/>
+          <text x="290" y="92" class="th" font-size="12">② 能源分区 / 独立配电</text>
+          <g><rect x="290" y="104" width="60" height="34" rx="2" class="box"/><rect x="360" y="104" width="60" height="34" rx="2" class="box"/><rect x="430" y="104" width="60" height="34" rx="2" class="box"/></g>
+          <g class="ts" text-anchor="middle" font-size="10"><text x="320" y="126">PACK-1</text><text x="390" y="126">PACK-2</text><text x="460" y="126">PACK-3</text></g>
+          <text x="290" y="160" class="tm">物理隔离 · 绝缘监测 · 高压互锁</text>
+        </g>
+        <!-- link -->
+        <g>
+          <rect x="524" y="70" width="252" height="106" rx="2" class="box-blue"/>
+          <text x="540" y="92" class="th" font-size="12">③ 通信双链路 / 地面调度</text>
+          <g><rect x="540" y="104" width="96" height="34" rx="2" class="box"/><rect x="648" y="104" width="110" height="34" rx="2" class="box"/></g>
+          <g class="ts" text-anchor="middle" font-size="10"><text x="588" y="126">主链路</text><text x="703" y="126">备用 / 异构链路</text></g>
+          <text x="540" y="160" class="tm">认证 · 完整性 · 心跳超时 · 失链自主</text>
+        </g>
+        <!-- propulsion -->
+        <g>
+          <rect x="24" y="192" width="752" height="94" rx="2" class="box-soft"/>
+          <text x="40" y="214" class="th" font-size="12">④ 推力重构：16 个独立动力单元</text>
+          <g>
+            <circle cx="70" cy="250" r="15" fill="#faf0ef" stroke="#c99b96"/><circle cx="118" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="166" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="214" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="262" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="310" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="358" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="406" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="454" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="502" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="550" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="598" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="646" cy="250" r="15" fill="#e8eff2" stroke="#2e6076"/><circle cx="694" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/><circle cx="742" cy="250" r="15" fill="#fff" stroke="#b9c6cc"/>
+          </g>
+          <text x="70" y="280" class="tm" text-anchor="middle" fill="#8a3331">失效</text>
+          <text x="646" y="280" class="tm" text-anchor="middle" fill="#2e6076">对角补偿</text>
+          <text x="400" y="280" class="tm" text-anchor="middle">单点失效后重新分配推力/力矩，维持可控飞行直至着陆</text>
+        </g>
+        <text x="24" y="308" class="tm">架构形式依据课件第五章第 15、87 页与公开构型整理；表决逻辑、通道数量与分区方式为教学假设 [21] (E4)。</text>
+      </svg>
+      <figcaption><span class="cn">图 8　三重冗余架构教学示意（E4）。<strong>具体通道数、表决逻辑与分区方式均为假设</strong>，仅用于说明"故障后维持可控飞行"的设计思路，不代表审定设计。</span><span class="en">Figure 8 · Redundant architecture schematic (E4). Channel counts, voting logic and partitioning are assumptions, not the approved design.</span></figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 8　安全目标到安全需求的分解（Table 8 · From safety goals to safety requirements）</span><span class="en">Table 8 · From safety goals to safety requirements</span></caption>
+        <thead><tr><th><span class="cn">安全目标</span><span class="en">Goal</span></th><th><span class="cn">派生安全需求（教学）</span><span class="en">Derived requirement (teaching)</span></th><th><span class="cn">验证方式</span><span class="en">Verification</span></th></tr></thead>
+        <tbody>
+          <tr><td class="num">SG-01</td><td><span class="cn">任一动力单元/供电分区失效后，剩余升力与力矩足以维持可控飞行与着陆</span><span class="en">After any single propulsion/power failure, remaining lift and moments sustain controlled flight and landing</span></td><td><span class="cn">故障注入试验、推力重构台架、飞行试验</span><span class="en">Fault injection, rig tests, flight tests</span></td></tr>
+          <tr><td class="num">SG-02</td><td><span class="cn">飞控通道间具备比较监控，单点错误输出不得直接驱动执行机构</span><span class="en">Cross-channel monitoring; no single erroneous output may drive actuators</span></td><td><span class="cn">2oo3 表决验证、共模故障注入</span><span class="en">Voting verification, common-mode injection</span></td></tr>
+          <tr><td class="num">SG-03</td><td><span class="cn">电池热失控可被检测、隔离，并在规定时间内完成着陆</span><span class="en">Thermal runaway detectable and isolatable within a specified time to landing</span></td><td><span class="cn">热失控试验、BMS 验证、应急程序演练</span><span class="en">Thermal tests, BMS validation, drills</span></td></tr>
+          <tr><td class="num">SG-04</td><td><span class="cn">位置估计具备多源一致性检查，越界时进入地理围栏与备降逻辑</span><span class="en">Multi-source position consistency; geofence and divert on excursion</span></td><td><span class="cn">GNSS 干扰/欺骗场景测试</span><span class="en">Jamming/spoofing scenario tests</span></td></tr>
+          <tr><td class="num">SG-06</td><td><span class="cn">所有地面指令须通过认证与完整性校验；失链超时后由机载逻辑接管</span><span class="en">Authenticated and integrity-checked commands; on-board takeover after link timeout</span></td><td><span class="cn">渗透测试、失链飞行试验</span><span class="en">Penetration tests, lost-link flight tests</span></td></tr>
+          <tr><td class="num">SG-07</td><td><span class="cn">ODC 任一条件越界时禁止起飞，并具备航中终止与备降能力</span><span class="en">No dispatch beyond ODC; in-flight abort and divert capability</span></td><td><span class="cn">场景矩阵验证、运行程序审查</span><span class="en">Scenario matrix validation, procedure review</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============ 10 标准 ============ -->
+    <h2 id="standards"><span class="h2-num">SECTION 10</span><span class="cn">标准体系与适航符合性</span><span class="en">Standards Landscape and Airworthiness Compliance</span></h2>
+
+    <p class="cn">课件第五章第 81 页并列给出汽车侧与航空侧的安全相关标准与最佳实践：汽车侧以 IATF 16949 & ASPICE（质量与软件质量）、ISO 26262:1-12、ISO 21448、ISO/SAE 21434 为主；航空侧以 SAE ARP4754A、ARP4761、DO-178C、DO-254 为主；航天与防务侧则有 AS9100、NASA 系统安全手册与 MIL-STD-882E<sup><a class="cite" href="#r21">[21]</a></sup>。第 65 页进一步给出按框架类、流程类、应用类划分的标准地图<sup><a class="cite" href="#r21">[21]</a></sup>。飞行汽车的特殊性在于<strong>必须同时满足两套体系的期望</strong>。</p>
+    <p class="en">Chapter 5, p.81 juxtaposes automotive standards (IATF 16949, ASPICE, ISO 26262, ISO 21448, ISO/SAE 21434) with aviation guidance (ARP4754A, ARP4761, DO-178C, DO-254) and aerospace/defence practices (AS9100, NASA system safety handbook, MIL-STD-882E) [21]. p.65 adds a framework/process/application standards map. Flying vehicles must satisfy both worlds.</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 9　汽车侧 / 航空侧 / 共性标准对照（Table 9 · Standards comparison）</span><span class="en">Table 9 · Standards comparison</span></caption>
+        <thead><tr><th><span class="cn">维度</span><span class="en">Dimension</span></th><th><span class="cn">汽车侧</span><span class="en">Automotive</span></th><th><span class="cn">航空侧</span><span class="en">Aviation</span></th><th><span class="cn">本案例的适用判断</span><span class="en">Applicability</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">系统开发过程</span><span class="en">System development</span></td><td><span class="cn">ISO 26262 概念/系统/硬件/软件 Part 3—6；ASPICE</span><span class="en">ISO 26262 Parts 3–6; ASPICE</span></td><td><span class="cn">SAE ARP4754A 民用飞机与系统开发指南</span><span class="en">SAE ARP4754A</span></td><td><span class="cn">以航空侧为主线，吸收汽车侧 HARA/ASIL 思路</span><span class="en">Aviation-led, with automotive HARA/ASIL ideas</span></td></tr>
+          <tr><td><span class="cn">安全性评估</span><span class="en">Safety assessment</span></td><td><span class="cn">HARA、FMEA、FTA、FMEDA、ASIL 分解</span><span class="en">HARA, FMEA, FTA, FMEDA, ASIL</span></td><td><span class="cn">ARP4761：FHA / PSSA / SSA / CCA</span><span class="en">ARP4761: FHA/PSSA/SSA/CCA</span></td><td><span class="cn">需建立自上而下 + 自下而上的双向证据链</span><span class="en">Bidirectional top-down and bottom-up evidence</span></td></tr>
+          <tr><td><span class="cn">软件与硬件</span><span class="en">Software &amp; hardware</span></td><td><span class="cn">ISO 26262 Part 6 / Part 5；AUTOSAR、MISRA</span><span class="en">ISO 26262 Parts 5–6; AUTOSAR, MISRA</span></td><td><span class="cn">DO-178C（机载软件）、DO-254（机载电子硬件）</span><span class="en">DO-178C, DO-254</span></td><td><span class="cn">飞控软件与飞控硬件需按机载研制保证等级开发</span><span class="en">Flight-critical software/hardware under airborne assurance</span></td></tr>
+          <tr><td><span class="cn">环境与电磁</span><span class="en">Environment / EMC</span></td><td><span class="cn">车规环境试验、ISO 21448 场景验证</span><span class="en">Automotive environmental tests, SOTIF scenarios</span></td><td><span class="cn">DO-160G 环境条件与试验程序</span><span class="en">DO-160G</span></td><td><span class="cn">低空气象、振动、电磁兼容需按航空环境验证</span><span class="en">Aviation-grade weather, vibration and EMC validation</span></td></tr>
+          <tr><td><span class="cn">信息安全</span><span class="en">Cybersecurity</span></td><td><span class="cn">ISO/SAE 21434、UN R155 / R156</span><span class="en">ISO/SAE 21434, UN R155/R156</span></td><td><span class="cn">适航框架下的机载系统与链路安保要求</span><span class="en">Airworthiness security for airborne systems and links</span></td><td><span class="cn">TARA 必须与 FHA/STPA 联合分析</span><span class="en">TARA must be analysed jointly with FHA/STPA</span></td></tr>
+          <tr><td><span class="cn">质量与体系</span><span class="en">Quality system</span></td><td><span class="cn">IATF 16949</span><span class="en">IATF 16949</span></td><td><span class="cn">AS9100；生产许可证 PC 的质量体系要求</span><span class="en">AS9100; PC quality-system requirements</span></td><td><span class="cn">批量生产阶段以 PC 质量体系为准</span><span class="en">PC quality system governs series production</span></td></tr>
+          <tr><td><span class="cn">安全论证</span><span class="en">Safety argument</span></td><td><span class="cn">UL 4600 自主产品安全案例、ISO/TR 4804</span><span class="en">UL 4600, ISO/TR 4804</span></td><td><span class="cn">GSN / SACM 结构化论证</span><span class="en">GSN / SACM</span></td><td><span class="cn">用于组织跨体系证据，形成可审计安全案例</span><span class="en">Structures cross-domain evidence into an auditable case</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <strong><span class="cn">DAL 与 ASIL 不能直接换算</span><span class="en">DAL and ASIL are not interchangeable</span></strong>
+      <p class="cn">ARP4754A 的研制保证等级（DAL A—E）与 ISO 26262 的汽车安全完整性等级（ASIL A—D）名称相似、都按严酷度分配，但<strong>判定依据、量化目标、验证深度与独立性要求并不相同</strong>。课件第 28 页更以"事故极小概率（10⁻⁹）"对比"事故可统计、可接受"，说明两套监管理念的底层差异<sup><a class="cite" href="#r21">[21]</a></sup>。因此在飞行汽车项目中，不能把车规 ASIL 等级直接"映射"为航空 DAL，必须按审定基础重新开展功能危害性评估与等级分配。</p>
+      <p class="en">ARP4754A DAL and ISO 26262 ASIL share severity-based allocation but differ in criteria, quantitative targets, verification depth and independence. Chapter 5 contrasts ~10⁻⁹ catastrophe probability with statistically tolerable automotive accidents [21]; a direct ASIL→DAL mapping is invalid and the assessment must be redone against the certification basis.</p>
+    </div>
+
+    <p class="cn">符合性层面，课件第 28 页把 TC / PC / OC 分别对应设计、生产、运行三个阶段的审核<sup><a class="cite" href="#r21">[21]</a></sup>。从安全工程角度看：<strong>TC 阶段</strong>需要提交 FHA / PSSA / SSA / FTA / CCA 等安全性评估证据与符合性方法；<strong>PC 阶段</strong>需要证明批量生产不偏离已批准设计（构型控制、质量体系、供应商管理）；<strong>OC 阶段</strong>需要证明运营主体具备持续安全运行能力（人员资质、维护方案、运行程序、应急与事件报告）。作业 01 已梳理取证时间线，本页补充的是<strong>每一张证书背后应有的安全证据类型</strong>（E3/E4 教学归纳）。</p>
+    <p class="en">Chapter 5 maps TC/PC/OC to design, production and operation [21]. From a safety-engineering view: TC requires FHA/PSSA/SSA/FTA/CCA evidence and compliance methods; PC requires configuration control and a quality system proving production conforms to the approved design; OC requires evidence of continued safe operation (licensing, maintenance, procedures, contingency and reporting). Coursework 01 gives the timeline; this page adds the evidence types behind each approval.</p>
+
+    <!-- ============ 11 V&V ============ -->
+    <h2 id="validation"><span class="h2-num">SECTION 11</span><span class="cn">安全测试验证与确认</span><span class="en">Safety Verification, Validation and Confirmation</span></h2>
+
+    <p class="cn">课件把 V 模型左侧定义为"基于场景的安全开发"（基于模型的功能定义、运行场景分析、整机危害分析、系统安全分析、组件安全分析、安全需求提取与实现），右侧定义为"基于场景的安全测试验证"（逻辑场景与性能边界定义、具体场景与测试场景生成、组件测试、系统集成与测试、整机集成与测试、整机安全确认、运行安全论证）<sup><a class="cite" href="#r21">[21]</a></sup>。</p>
+    <p class="en">Chapter 5 defines the V-model's left side as scenario-based safety development (model-based functions, scenario analysis, hazard analysis, system/component analysis, requirements) and the right side as scenario-based safety V&amp;V (logical/concrete/test scenarios, component, system and aircraft integration tests, safety confirmation, operational argument) [21].</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 9 / Figure 9</span><span class="en">Figure 9</span></span>
+      <svg viewBox="0 0 800 310" role="img" aria-label="基于场景的 V 模型安全开发与验证">
+        <rect width="800" height="310" fill="#fff"/>
+        <text x="24" y="28" class="th">V 模型：左侧开发分解，右侧验证确认</text>
+        <text x="24" y="46" class="tm">Scenario-based safety development (left) and verification (right), after Chapter 5, pp.85–86</text>
+        <!-- left descending -->
+        <g>
+          <rect x="40" y="66" width="210" height="38" rx="2" class="box-deep"/>
+          <text x="145" y="90" class="tw" text-anchor="middle" font-size="11">1 整机功能与场景定义 / ODC</text>
+          <rect x="70" y="118" width="210" height="38" rx="2" class="box-blue"/>
+          <text x="175" y="142" class="th" text-anchor="middle" font-size="11">2 危害分析 HARA / FHA / STPA</text>
+          <rect x="100" y="170" width="210" height="38" rx="2" class="box-blue"/>
+          <text x="205" y="194" class="th" text-anchor="middle" font-size="11">3 系统安全架构 / 需求分解</text>
+          <rect x="130" y="222" width="210" height="38" rx="2" class="box"/>
+          <text x="235" y="246" class="ts" text-anchor="middle">4—6 组件安全设计与实现</text>
+        </g>
+        <!-- right ascending -->
+        <g>
+          <rect x="550" y="66" width="210" height="38" rx="2" class="box-deep"/>
+          <text x="655" y="90" class="tw" text-anchor="middle" font-size="11">8 运行安全论证 / 安全案例</text>
+          <rect x="520" y="118" width="210" height="38" rx="2" class="box-blue"/>
+          <text x="625" y="142" class="th" text-anchor="middle" font-size="11">整机集成与测试 / 安全确认</text>
+          <rect x="490" y="170" width="210" height="38" rx="2" class="box-blue"/>
+          <text x="595" y="194" class="th" text-anchor="middle" font-size="11">系统集成与测试</text>
+          <rect x="460" y="222" width="210" height="38" rx="2" class="box"/>
+          <text x="565" y="246" class="ts" text-anchor="middle">7 组件测试 / 故障注入</text>
+        </g>
+        <!-- V lines -->
+        <g class="line" stroke-width="1.8">
+          <line x1="250" y1="104" x2="280" y2="118"/><line x1="280" y1="118" x2="310" y2="170"/>
+          <line x1="310" y1="170" x2="340" y2="222"/><line x1="340" y1="222" x2="460" y2="260"/>
+          <line x1="460" y1="260" x2="490" y2="208"/><line x1="490" y1="208" x2="520" y2="156"/>
+          <line x1="520" y1="156" x2="550" y2="104"/>
+        </g>
+        <!-- center impl -->
+        <rect x="352" y="252" width="96" height="30" rx="2" class="box-soft"/>
+        <text x="400" y="272" class="ts" text-anchor="middle">产品实现</text>
+        <!-- horizontal correspondence -->
+        <g class="line-d" stroke="#a9bcc4">
+          <line x1="250" y1="85" x2="550" y2="85"/>
+          <line x1="280" y1="137" x2="520" y2="137"/>
+          <line x1="310" y1="189" x2="490" y2="189"/>
+          <line x1="340" y1="241" x2="460" y2="241"/>
+        </g>
+        <text x="400" y="78" class="tm" text-anchor="middle">场景与需求 ↔ 验证与确认的对应关系</text>
+        <text x="24" y="302" class="tm">每一层左侧导出的安全需求，都应在右侧对应层级被验证；虚线为教学标注的对应关系 [21] (E4)。</text>
+      </svg>
+      <figcaption><span class="cn">图 9　基于场景的 V 模型，依据课件第五章第 85—86 页重绘<sup><a class="cite" href="#r21">[21]</a></sup>（E3/E4）。横向虚线强调"需求—验证"的一一对应，这是安全论证可审计的基础。</span><span class="en">Figure 9 · Scenario-based V-model redrawn from Chapter 5, pp.85–86 [21]. Dashed lines mark requirement-to-verification correspondence.</span></figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 10　验证活动与证据类型（Table 10 · Verification activities and evidence）</span><span class="en">Table 10 · Verification activities and evidence</span></caption>
+        <thead><tr><th><span class="cn">层级</span><span class="en">Level</span></th><th><span class="cn">验证活动</span><span class="en">Activity</span></th><th><span class="cn">典型证据</span><span class="en">Evidence</span></th><th><span class="cn">对应安全类别</span><span class="en">Safety class</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">组件</span><span class="en">Component</span></td><td><span class="cn">电机/电池/飞控板级测试、故障注入、环境与电磁试验、软件单元测试</span><span class="en">Bench tests, fault injection, environmental/EMC tests, software unit tests</span></td><td><span class="cn">测试报告、FMEDA、DO-160G / DO-178C / DO-254 记录</span><span class="en">Test reports, FMEDA, DO-160G / DO-178C / DO-254 records</span></td><td><span class="cn">功能安全 / 被动安全</span><span class="en">FuSa / Passive</span></td></tr>
+          <tr><td><span class="cn">系统</span><span class="en">System</span></td><td><span class="cn">冗余切换、推力重构、失链处置、热失控隔离、链路认证与抗干扰</span><span class="en">Redundancy switching, thrust reallocation, lost-link behaviour, pack isolation</span></td><td><span class="cn">集成测试报告、FTA/CCA 验证、SSA 证据包</span><span class="en">Integration reports, FTA/CCA verification, SSA evidence</span></td><td><span class="cn">功能安全 / 信息安全</span><span class="en">FuSa / Security</span></td></tr>
+          <tr><td><span class="cn">整机</span><span class="en">Aircraft</span></td><td><span class="cn">逻辑场景 → 具体场景 → 测试场景生成；边界气象、障碍、载荷与重心、应急着陆</span><span class="en">Logical → concrete → test scenarios; weather limits, obstacles, payload/CG, contingency landing</span></td><td><span class="cn">飞行试验报告、场景覆盖率、安全确认结论</span><span class="en">Flight-test reports, scenario coverage, confirmation</span></td><td><span class="cn">SOTIF / 行为安全</span><span class="en">SOTIF / Behaviour</span></td></tr>
+          <tr><td><span class="cn">运行</span><span class="en">Operation</span></td><td><span class="cn">示范运营数据、事件与未遂事件报告、维护记录、人员资质与演练</span><span class="en">Demonstration data, incident/near-miss reports, maintenance records, drills</span></td><td><span class="cn">运行数据集、持续适航记录、安全绩效指标</span><span class="en">Operations dataset, continued airworthiness, safety performance indicators</span></td><td><span class="cn">运行安全 / 持续适航</span><span class="en">Operations / airworthiness</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============ 12 安全论证 ============ -->
+    <h2 id="assurance"><span class="h2-num">SECTION 12</span><span class="cn">运行安全论证与持续适航</span><span class="en">Operational Safety Argument and Continued Airworthiness</span></h2>
+
+    <p class="cn">课件把安全论证（Safety Argument）列为安全系统工程的最后一环，方法为 GSN 与 SACM；并区分<strong>流程安全论证</strong>（组织、人员、生命周期、方法与工具的充分性）与<strong>产品安全论证</strong>（安全目标与各层安全需求之间的推理和支持）<sup><a class="cite" href="#r25">[25]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>。安全案例不是一张证书，而是把分散证据组织成可辩驳、可审计、可更新的论证结构。</p>
+    <p class="en">Chapter 5 closes the process with safety argument using GSN/SACM, distinguishing process argument (adequacy of organisation, personnel, lifecycle, methods and tools) from product argument (reasoning linking safety goals to layered requirements) [25][21]. A safety case is an auditable, updateable structure, not a certificate.</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 10 / Figure 10</span><span class="en">Figure 10</span></span>
+      <svg viewBox="0 0 800 330" role="img" aria-label="GSN 安全论证骨架">
+        <rect width="800" height="330" fill="#fff"/>
+        <text x="24" y="28" class="th">GSN 安全论证骨架（教学）</text>
+        <text x="24" y="46" class="tm">Goal–Strategy–Solution–Context skeleton for the operational safety case (E4)</text>
+        <!-- top goal -->
+        <rect x="270" y="62" width="260" height="44" rx="2" class="box-deep"/>
+        <text x="400" y="82" class="tw" text-anchor="middle" font-size="11">G0 在既定 ODC 内运行安全可接受</text>
+        <text x="400" y="98" class="tw" text-anchor="middle" font-size="9" opacity="0.85">Top goal: acceptable operational safety</text>
+        <!-- context -->
+        <rect x="560" y="62" width="216" height="44" rx="14" class="box-soft"/>
+        <text x="668" y="82" class="ts" text-anchor="middle" font-size="10">C1 ODC / 审定基础 / 公开资料边界</text>
+        <text x="668" y="98" class="tm" text-anchor="middle">Context</text>
+        <line x1="530" y1="84" x2="560" y2="84" class="line-d"/>
+        <!-- strategy -->
+        <path d="M330 126 L470 126 L482 150 L318 150 Z" fill="#e8eff2" stroke="#b9cdd5"/>
+        <text x="400" y="142" class="th" text-anchor="middle" font-size="11">S1 按 0—8 过程与五类安全分解</text>
+        <line x1="400" y1="106" x2="400" y2="126" class="line"/>
+        <!-- sub goals -->
+        <g>
+          <rect x="24" y="176" width="176" height="46" rx="2" class="box-blue"/><text x="112" y="196" class="th" text-anchor="middle" font-size="10.5">G1 危害已识别并缓解</text><text x="112" y="212" class="tm" text-anchor="middle">HARA / FHA / STPA</text>
+          <rect x="212" y="176" width="176" height="46" rx="2" class="box-blue"/><text x="300" y="196" class="th" text-anchor="middle" font-size="10.5">G2 功能安全需求已验证</text><text x="300" y="212" class="tm" text-anchor="middle">FMEA / FTA / CCA / SSA</text>
+          <rect x="400" y="176" width="176" height="46" rx="2" class="box-blue"/><text x="488" y="196" class="th" text-anchor="middle" font-size="10.5">G3 SOTIF 与信息安全可控</text><text x="488" y="212" class="tm" text-anchor="middle">场景验证 / TARA</text>
+          <rect x="588" y="176" width="188" height="46" rx="2" class="box-blue"/><text x="682" y="196" class="th" text-anchor="middle" font-size="10.5">G4 运行安全持续成立</text><text x="682" y="212" class="tm" text-anchor="middle">SMS / 持续适航 / 数据</text>
+        </g>
+        <g class="line">
+          <line x1="400" y1="150" x2="112" y2="176"/><line x1="400" y1="150" x2="300" y2="176"/>
+          <line x1="400" y1="150" x2="488" y2="176"/><line x1="400" y1="150" x2="682" y2="176"/>
+        </g>
+        <!-- solutions -->
+        <g>
+          <circle cx="112" cy="256" r="17" fill="#f5f5f7" stroke="#8fb0bb"/><circle cx="300" cy="256" r="17" fill="#f5f5f7" stroke="#8fb0bb"/><circle cx="488" cy="256" r="17" fill="#f5f5f7" stroke="#8fb0bb"/><circle cx="682" cy="256" r="17" fill="#f5f5f7" stroke="#8fb0bb"/>
+        </g>
+        <g class="tm" text-anchor="middle">
+          <text x="112" y="290">危害清单 / 风险矩阵</text><text x="300" y="290">测试报告 / SSA</text>
+          <text x="488" y="290">场景覆盖 / 渗透测试</text><text x="682" y="290">运行数据 / 事件报告</text>
+        </g>
+        <g class="line"><line x1="112" y1="222" x2="112" y2="239"/><line x1="300" y1="222" x2="300" y2="239"/><line x1="488" y1="222" x2="488" y2="239"/><line x1="682" y1="222" x2="682" y2="239"/></g>
+        <text x="24" y="320" class="tm">GSN 记号：矩形 = Goal，梯形 = Strategy，圆角框 = Context，圆 = Solution/Evidence。结构参照课件第 77、87 页 [21] (E4)。</text>
+      </svg>
+      <figcaption><span class="cn">图 10　GSN 安全论证骨架（E4）。本文只给出论证结构，<strong>不声称任何证据节点已被满足</strong>；真实安全案例应由局方、企业与运营方共同维护。</span><span class="en">Figure 10 · GSN skeleton (E4). The structure is shown only; no claim is made that any evidence node is satisfied.</span></figcaption>
+    </figure>
+
+    <h3><span class="cn">12.1　持续适航：安全论证不是一次性交付</span><span class="en">12.1 Continued airworthiness: the case is never finished</span></h3>
+    <p class="cn">课件第 30—31 页提出法规与标准将从"原则性许可"走向"以风险为导向的精细化管理"，从"个案审定"走向"可复用的通用规范"，并强调监管沙盒、实时数据上报、事件调查与责任划分<sup><a class="cite" href="#r21">[21]</a></sup>。对安全工程而言，这意味着运行阶段的证据流必须回流到设计与论证：每一起未遂事件、每一次链路降级、每一次电池异常，都是更新 FMEA、触发条件库与 ODC 边界的输入。</p>
+    <p class="en">Chapter 5, pp.30–31 anticipates risk-oriented, refined regulation, reusable generic standards, regulatory sandboxes, real-time data reporting, incident investigation and liability rules [21]. Operation-phase evidence must flow back into design: every near-miss, link degradation and battery anomaly updates the FMEA, triggering-condition catalogue and ODC boundaries.</p>
+
+    <div class="cards four">
+      <div class="card"><span class="idx">SMS 01</span><h4><span class="cn">安全政策与目标</span><span class="en">Policy &amp; objectives</span></h4><p><span class="cn">明确组织、职责与可接受安全绩效指标。</span><span class="en">Organisation, accountability and safety performance indicators.</span></p></div>
+      <div class="card"><span class="idx">SMS 02</span><h4><span class="cn">风险管理</span><span class="en">Risk management</span></h4><p><span class="cn">危害识别、风险评估、缓解措施与残余风险跟踪。</span><span class="en">Hazard identification, assessment, mitigation and residual risk tracking.</span></p></div>
+      <div class="card"><span class="idx">SMS 03</span><h4><span class="cn">安全保证</span><span class="en">Safety assurance</span></h4><p><span class="cn">运行数据监测、审计、事件调查与纠正措施闭环。</span><span class="en">Monitoring, audit, investigation and corrective-action closure.</span></p></div>
+      <div class="card"><span class="idx">SMS 04</span><h4><span class="cn">安全促进</span><span class="en">Safety promotion</span></h4><p><span class="cn">培训、资质、交流与经验反馈。</span><span class="en">Training, licensing, communication and feedback.</span></p></div>
+    </div>
+    <p class="small"><span class="cn">SMS 四支柱为通用安全管理体系框架的教学归纳（E4），与课件第 0 号过程"安全文化与安全管理"对应<sup><a class="cite" href="#r21">[21]</a></sup>。</span><span class="en">Four SMS pillars are a teaching synthesis (E4) corresponding to step 0 in Chapter 5 [21].</span></p>
+
+    <!-- ============ 13 结论 ============ -->
+    <h2 id="conclusion"><span class="h2-num">SECTION 13</span><span class="cn">综合风险清单与结论</span><span class="en">Consolidated Risk Register and Conclusion</span></h2>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 11　七类风险域综合清单（Table 11 · Consolidated risk register）</span><span class="en">Table 11 · Consolidated risk register</span></caption>
+        <thead><tr><th><span class="cn">风险域</span><span class="en">Domain</span></th><th><span class="cn">主要风险</span><span class="en">Main risks</span></th><th><span class="cn">核心措施</span><span class="en">Key measures</span></th><th><span class="cn">残余风险判断</span><span class="en">Residual risk</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">功能安全</span><span class="en">Functional safety</span></td><td><span class="cn">动力、配电、飞控、导航单点与共因失效</span><span class="en">Single-point and common-cause failures</span></td><td><span class="cn">全备份、2oo3 表决、分区供电、FMEA/FTA/CCA/SSA</span><span class="en">Redundancy, voting, segregation, FMEA/FTA/CCA/SSA</span></td><td class="lvl-c"><span class="cn">限定 ODC 内可接受</span><span class="en">Acceptable within ODC</span></td></tr>
+          <tr><td><span class="cn">预期功能安全</span><span class="en">SOTIF</span></td><td><span class="cn">低空气象、GNSS 多路径、突发障碍、乘客误用</span><span class="en">Weather, GNSS multipath, obstacles, misuse</span></td><td><span class="cn">ODC 硬约束、场景库、地理围栏、备降逻辑</span><span class="en">Hard ODC, scenario catalogue, geofence, divert</span></td><td class="lvl-b"><span class="cn">开放，依赖运行数据</span><span class="en">Open; depends on operating data</span></td></tr>
+          <tr><td><span class="cn">信息安全 / 电磁</span><span class="en">Security / EMC</span></td><td><span class="cn">伪造指令、链路中断、GNSS 欺骗、共因干扰</span><span class="en">Forged commands, link loss, spoofing, EMI</span></td><td><span class="cn">TARA、双向认证、双链路、失链自主、DO-160G</span><span class="en">TARA, authentication, dual link, autonomy, DO-160G</span></td><td class="lvl-b"><span class="cn">开放，需持续评估</span><span class="en">Open; continuous assessment</span></td></tr>
+          <tr><td><span class="cn">被动安全</span><span class="en">Passive safety</span></td><td><span class="cn">垂直坠撞、电池热失控、空中火灾、第三方风险</span><span class="en">Vertical impact, thermal runaway, fire, third parties</span></td><td><span class="cn">吸能结构、约束系统、热隔离、场地净空</span><span class="en">Energy absorption, restraints, isolation, area control</span></td><td class="lvl-b"><span class="cn">公开证据不足</span><span class="en">Insufficient public evidence</span></td></tr>
+          <tr><td><span class="cn">行为安全</span><span class="en">Behavioural safety</span></td><td><span class="cn">地面误放行、维护差错、乘客误用</span><span class="en">Dispatch error, maintenance error, misuse</span></td><td><span class="cn">资质与培训、双人复核、防呆、构型记录</span><span class="en">Licensing, two-person rule, poka-yoke, config records</span></td><td class="lvl-b"><span class="cn">组织层面可控但需审计</span><span class="en">Manageable, audit required</span></td></tr>
+          <tr><td><span class="cn">运行与空域</span><span class="en">Operations / airspace</span></td><td><span class="cn">多机调度、空域融合、高频次周转</span><span class="en">Fleet dispatch, airspace integration, high-frequency ops</span></td><td><span class="cn">隔离运行起步、分级设施、数字空管、事件报告</span><span class="en">Segregated start, tiered facilities, digital ATM, reporting</span></td><td class="lvl-a"><span class="cn">主要未验证领域</span><span class="en">Main unverified area</span></td></tr>
+          <tr><td><span class="cn">标准与适航</span><span class="en">Standards / airworthiness</span></td><td><span class="cn">个案专用条件、跨体系互认、责任划分</span><span class="en">Bespoke conditions, mutual recognition, liability</span></td><td><span class="cn">TC/PC/OC 证据链、通用标准演进、监管沙盒</span><span class="en">TC/PC/OC evidence, generic standards, sandboxes</span></td><td class="lvl-a"><span class="cn">体系仍在构建</span><span class="en">Framework still emerging</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="quote">
+      <p><span class="cn">"全备份解决的是'部件坏了怎么办'，ODC 解决的是'世界超出设计预期怎么办'，安全案例解决的是'凭什么相信这两件事都做到了'。"</span><span class="en">"Redundancy answers 'what if a part fails'; the ODC answers 'what if the world exceeds the design assumption'; the safety case answers 'why should we believe both were done'."</span></p>
+      <footer><span class="cn">本文结论 · 课程作业 02</span><span class="en">Concluding remark · Coursework 02</span></footer>
+    </div>
+
+    <p class="cn"><strong>总结：</strong>把课件第五章的系统安全工程过程完整套用到 EH216-S，可以得到一个清晰的结论。<strong>第一</strong>，构型层面的安全资源是充分的：16 个独立动力单元、关键部件全备份、地面调度与预设航线，构成可支撑"故障后维持可控飞行"的物理基础。<strong>第二</strong>，真正的难点不在冗余数量，而在共因失效、SOTIF 触发条件、链路完整性、垂直坠撞适撞性与运行体系的证据链。<strong>第三</strong>，四证齐全证明的是<strong>限定 ODC 内的设计安全性已获局方接受</strong>，而非"任何场景下的运行安全已被证明"。<strong>第四</strong>，安全是一个生命周期过程：从 FHA 到 SSA、从场景库到运行数据、从 GSN 到持续适航，都需要随运行规模扩大而持续更新。这也正是课件把"全生命周期安全保障技术"列为飞行汽车支撑技术的原因<sup><a class="cite" href="#r21">[21]</a></sup>。</p>
+    <p class="en"><strong>Conclusion:</strong> applying the full Chapter 5 process yields four findings. (1) Configuration-level safety resources are substantial: sixteen independent propulsion units, full redundancy and ground-supervised pre-programmed routes. (2) The hard problems are common-cause failures, SOTIF triggering conditions, link integrity, vertical crashworthiness and the operational evidence chain — not the number of redundant parts. (3) Four approvals demonstrate accepted design safety within a limited ODC, not proven safety in all scenarios. (4) Safety is a lifecycle process, which is why Chapter 5 lists whole-lifecycle safety assurance as an enabling technology [21].</p>
+
+    <h3><span class="cn">13.1　课程延伸：五项可复用练习</span><span class="en">13.1 Five reusable exercises</span></h3>
+    <div class="accordion">
+      <details open><summary><span class="cn">练习 A　把 FMEA 扩展为 FMEDA</span><span class="en">Exercise A · Extend FMEA into FMEDA</span></summary><div class="body"><p class="cn">为表 4 每一行补充"失效率、诊断覆盖率、安全机制有效性"三列，并讨论在缺乏公开失效率数据时如何做定性替代而不虚构数字。</p><p class="en">Add failure rate, diagnostic coverage and safety-mechanism effectiveness columns, and discuss qualitative substitutes when data are unavailable.</p></div></details>
+      <details><summary><span class="cn">练习 B　构建触发条件库</span><span class="en">Exercise B · Build a triggering-condition catalogue</span></summary><div class="body"><p class="cn">把表 5 的每一行扩展为"逻辑场景 → 具体场景 → 测试场景"三层，并说明每个场景用于验证哪一条安全需求（对应表 8）。</p><p class="en">Expand Table 5 into logical → concrete → test scenarios and map each to a safety requirement in Table 8.</p></div></details>
+      <details><summary><span class="cn">练习 C　共因分析清单</span><span class="en">Exercise C · Common-cause checklist</span></summary><div class="body"><p class="cn">列出可能同时击穿三余度飞控、三组电池与双链路的共因（电源、时钟、软件版本、安装工艺、电磁环境、维护程序、供应链批次），并为每项给出分区或多样性措施。</p><p class="en">List common causes that could defeat triple flight control, three battery groups and dual links, and propose partitioning or dissimilarity measures.</p></div></details>
+      <details><summary><span class="cn">练习 D　重绘 GSN 并标注证据缺口</span><span class="en">Exercise D · Redraw GSN and mark evidence gaps</span></summary><div class="body"><p class="cn">以图 10 为模板，把每个 Solution 节点替换为"公开可得 / 未公开 / 需运行数据"三类状态，直观呈现哪些论证环节尚缺证据。</p><p class="en">Replace each Solution node with public / not public / requires operating data to visualise evidence gaps.</p></div></details>
+      <details><summary><span class="cn">练习 E　迁移到其他对象</span><span class="en">Exercise E · Transfer to another subject</span></summary><div class="body"><p class="cn">把本页九步框架套用到倾转旋翼构型、复合翼货运型号或"低空空管平台"子系统，对比危害清单与冗余策略的差异。</p><p class="en">Apply the nine-step framework to a tilt-rotor aircraft, a compound-wing cargo type or a low-altitude traffic-management subsystem and compare hazards and redundancy strategies.</p></div></details>
+    </div>
+
+    <!-- ============ 14 参考文献 ============ -->
+    <h2 id="references"><span class="h2-num">SECTION 14</span><span class="cn">参考文献</span><span class="en">References</span></h2>
+    <p class="small"><span class="cn">文献按本文首次引用顺序编号；与作业 01 独立编号。标准与课件为框架依据，图片条目附作者与许可协议。</span><span class="en">Numbered independently of Coursework 01, in order of first citation. Standards and course material provide the framework; image entries include author and licence.</span></p>
+    <ol class="refs">
+      <li id="r1"><b>[1]</b> <span class="cn">亿航智能（EHang, Nasdaq: EH）官方网站与产品资料</span><span class="en">EHang official website and product information</span>. <a href="https://www.ehang.com/" target="_blank" rel="noopener">https://www.ehang.com/</a> · E1*</li>
+      <li id="r2"><b>[2]</b> <span class="cn">亿航智能，《获得中国民航局颁发的生产许可证，EH216-S 迈入规模化生产》</span><span class="en">EHang, "Receives Production Certificate from CAAC for EH216-S"</span>. <a href="https://www.ehang.com/news/1059.html" target="_blank" rel="noopener">ehang.com/news/1059.html</a> · E1*</li>
+      <li id="r3"><b>[3]</b> <span class="cn">亿航智能，《EH216-S 在中国市场官方指导价 239 万元人民币》，2024-02-01</span><span class="en">EHang, "Suggested Retail Price of RMB 2.39 Million for EH216-S in China"</span>. <a href="https://www.ehang.com/news/1044.html" target="_blank" rel="noopener">ehang.com/news/1044.html</a> · E1*</li>
+      <li id="r4"><b>[4]</b> EHang Investor Relations, "EHang Announces Suggested Retail Price of RMB2.39 Million for EH216-S", 1 Feb 2024. <a href="https://ir.ehang.com/news-releases/news-release-details/ehang-announces-suggested-retail-price-rmb239-million-eh216-s/" target="_blank" rel="noopener">ir.ehang.com</a> · E1*</li>
+      <li id="r5"><b>[5]</b> <span class="cn">人民日报 / 人民网，《"空中的士"飞入现实（探访）》，2025-04-26</span><span class="en">People's Daily, "'Air Taxis' Enter Reality"</span>. <a href="https://finance.people.com.cn/BIG5/n1/2025/0426/c1004-40468562.html" target="_blank" rel="noopener">finance.people.com.cn</a> · E2</li>
+      <li id="r6"><b>[6]</b> <span class="cn">百度百科，"EH216-S 无人驾驶载人航空器系统"词条（取证节点、参数与运营交叉核验）</span><span class="en">Baidu Baike, "EH216-S" entry</span>. <a href="https://baike.baidu.com/item/EH216-S%E6%97%A0%E4%BA%BA%E9%A9%BE%E9%A9%B6%E8%BD%BD%E4%BA%BA%E8%88%AA%E7%A9%BA%E5%99%A8/64537562" target="_blank" rel="noopener">baike.baidu.com</a> · E2</li>
+      <li id="r7"><b>[7]</b> <span class="cn">低空经济资源网，亿航 EH216-S 参数配置页（构型、MTOW、速度、航程、电池、环境限制）</span><span class="en">Low-altitude economy resource portal, EH216-S specification sheet</span>. <a href="https://www.laernoc.com/newsinfo/1831227828784467968" target="_blank" rel="noopener">laernoc.com</a> · E2</li>
+      <li id="r8"><b>[8]</b> <span class="cn">中国民用航空局（CAAC），《亿航 EH216-S 型无人驾驶航空器系统型号合格审定专用条件》及适航审定公告</span><span class="en">CAAC, "Special Conditions for Type Certification of EH216-S"</span>. <a href="https://www.caac.gov.cn/" target="_blank" rel="noopener">https://www.caac.gov.cn/</a> · E1</li>
+      <li id="r9"><b>[9]</b> EASA, "Special Condition for Small-Category VTOL Aircraft / SC-VTOL-01", 2019. <a href="https://www.easa.europa.eu/" target="_blank" rel="noopener">easa.europa.eu</a> · E1</li>
+      <li id="r10"><b>[10]</b> FAA, "Advanced Air Mobility Implementation Plan", "AAM National Strategy 2026–2036" and powered-lift rulemaking. <a href="https://www.faa.gov/" target="_blank" rel="noopener">faa.gov</a> · E1</li>
+      <li id="r11"><b>[11]</b> <span class="cn">国务院、中央军委，《无人驾驶航空器飞行管理暂行条例》</span><span class="en">Interim Regulations on the Flight Management of Unmanned Aircraft</span> · E1</li>
+      <li id="r12"><b>[12]</b> <span class="cn">《飞行汽车发展报告 2.0：迈向空地一体交通新时代》（课件第五章核心参考）</span><span class="en">Flying Vehicle Development Report 2.0 (core reference of Chapter 5)</span> · E3</li>
+      <li id="r13"><b>[13]</b> <span class="cn">张扬军等，《飞行汽车的研究发展与关键技术》（综述论文）</span><span class="en">Zhang Yangjun et al., "Research Development and Key Technologies of Flying Cars"</span> · E3</li>
+      <li id="r14"><b>[14]</b> ISO 21448:2022, "Road vehicles — Safety of the intended functionality" (SOTIF). · E1</li>
+      <li id="r15"><b>[15]</b> "Flying Car Transportation System: Advances, Techniques, and Challenges", IEEE Xplore document 9345783 (design-stage safety considerations including multi-dimensional crashworthiness, in-flight fire and cyber/EM threats). <a href="https://ieeexplore.ieee.org/abstract/document/9345783" target="_blank" rel="noopener">ieeexplore.ieee.org</a> · E3</li>
+      <li id="r16"><b>[16]</b> ISO 26262:2018 (Parts 1–12), "Road vehicles — Functional safety". · E1</li>
+      <li id="r17"><b>[17]</b> ISO/SAE 21434:2021, "Road vehicles — Cybersecurity engineering" (TARA). · E1</li>
+      <li id="r18"><b>[18]</b> SAE ARP4754A, "Guidelines for Development of Civil Aircraft and Systems"; SAE ARP4761, "Guidelines and Methods for Conducting the Safety Assessment Process on Civil Airborne Systems and Equipment". · E1</li>
+      <li id="r19"><b>[19]</b> RTCA DO-178C "Software Considerations in Airborne Systems and Equipment Certification"; DO-254 "Design Assurance Guidance for Airborne Electronic Hardware"; DO-160G "Environmental Conditions and Test Procedures for Airborne Equipment". · E1</li>
+      <li id="r20"><b>[20]</b> <span class="cn">张玉新，《第四章 飞行汽车的现状及展望》，飞行汽车技术基础，吉林大学自动驾驶安全联合实验室，2026</span><span class="en">Zhang Yuxin, Chapter 4: Status and Outlook of Flying Vehicles, Jilin University, 2026</span> · E3</li>
+      <li id="r21"><b>[21]</b> <span class="cn">张玉新，《第五章 飞行汽车产业分析及支撑技术》，飞行汽车技术基础（含"从系统工程到安全系统工程""智能运载工具安全系统工程""飞行汽车安全系统工程"三部分），吉林大学自动驾驶安全联合实验室，2026</span><span class="en">Zhang Yuxin, Chapter 5: Industry Analysis and Enabling Technologies (including systems engineering → safety systems engineering sections), Jilin University, 2026</span> · E3</li>
+      <li id="r22"><b>[22]</b> Yuxin Zhang, "The Flying Tesla Roadster: Technical, Operational, and Market Feasibility", Fundamentals of Flying Vehicle Technology, Case 01. <a href="https://lab.autozyx.com/fundamentals-of-flying-vehicle-technology/tesla-flying-roadster/" target="_blank" rel="noopener">lab.autozyx.com</a> · E3</li>
+      <li id="r23"><b>[23]</b> ANSI/UL 4600 "Standard for Evaluation of Autonomous Products" (safety case); ISO/TR 4804 "Road vehicles — Safety and cybersecurity for automated driving systems — Design, verification and validation"; SAE J3187 "Systems Theoretic Process Analysis (STPA)". · E1</li>
+      <li id="r24"><b>[24]</b> INCOSE Systems Engineering Handbook (4th ed.); ISO/IEC/IEEE 15288:2015 "System life cycle processes"; OMG SysML. · E1</li>
+      <li id="r25"><b>[25]</b> <span class="cn">GSN（Goal Structuring Notation）与 SACM（Structured Assurance Case Metamodel）结构化安全论证方法</span><span class="en">Goal Structuring Notation (GSN) and Structured Assurance Case Metamodel (SACM)</span> · E1</li>
+      <li id="r26"><b>[26]</b> <span class="cn">NHTSA 交通事故人为因素统计（课件第五章第 58 页引用）</span><span class="en">NHTSA crash-causation statistics on human factors, cited in Chapter 5, p.58</span> · E3</li>
+      <li id="r27"><b>[27]</b> IEEE P2846, "Assumptions for Models in Safety-Related Automated Vehicle Behavior" (behavioural safety assumptions). · E1</li>
+      <li id="r28"><b>[28]</b> SAE AS9100 "Quality Management Systems — Aviation, Space and Defense"; NASA System Safety Handbook; MIL-STD-882E "Department of Defense Standard Practice: System Safety". · E1</li>
+      <li id="r29"><b>[29]</b> <span class="cn">民航与航空航天安全分析方法综述：FTA、CCA、ETA、Bow-Tie、BBN、HAZOP、HEART、HFACS、Reich–Marks 碰撞风险模型（课件第五章第 39、41 页整理）</span><span class="en">Civil-aviation safety analysis methods: FTA, CCA, ETA, Bow-Tie, BBN, HAZOP, HEART, HFACS, Reich–Marks collision risk models (Chapter 5, pp.39, 41)</span> · E3</li>
+      <li id="r30"><b>[30]</b> David Perez, "EHang 216 8 vista general by-dpc.jpg", Wikimedia Commons, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a>. <a href="https://commons.wikimedia.org/wiki/File:EHang_216_8_vista_general_by-dpc.jpg" target="_blank" rel="noopener">commons.wikimedia.org</a></li>
+      <li id="r31"><b>[31]</b> David Perez, "EHang 216 2 motores by-dpc.jpg", Wikimedia Commons, CC0.</li>
+      <li id="r32"><b>[32]</b> David Perez, "EHang 216 5 especificaciones by-dpc.jpg", Wikimedia Commons, CC0.</li>
+      <li id="r33"><b>[33]</b> CarlosVdeHabsburgo, "EHang 216 de la Policía Nacional.jpg", Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</li>
+      <li id="r34"><b>[34]</b> NASA Langley Research Center / NASA Mark Knopp, "Electric Vertical Take-off and Landing Impact Event (LRC-2025-OCIO P-01814)", Wikimedia Commons, Public domain.</li>
+      <li id="r35"><b>[35]</b> NASA Langley Research Center / NASA Mark Knopp, "Electric Vertical Take-off and Landing Impact Event (LRC-2025-OCIO P-01840)", Wikimedia Commons, Public domain.</li>
+      <li id="r36"><b>[36]</b> Artvill, "EHang 216-S au Salon du Bourget 2025.jpg", Wikimedia Commons, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</li>
+      <li id="r37"><b>[37]</b> NCDOTcommunications, "NCTranspoSummit-2020.01.08-0087 (49351366307).jpg", Wikimedia Commons, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>.</li>
+      <li id="r38"><b>[38]</b> NonNerd, "Helipad in Jatayu Park.jpg", Wikimedia Commons, CC0.</li>
+      <li id="r39"><b>[39]</b> David Perez, "EHang 216 1 frente by-dpc.jpg", Wikimedia Commons, CC0.</li>
+      <li id="r40"><b>[40]</b> Harlan Huntington / U.S. Air Force, "Joby Aviation S4 experimental eVTOL aircraft at Edwards AFB.jpg", Wikimedia Commons, Public domain. <span class="cn">（用于作业 01 构型对比）</span><span class="en">(used in Coursework 01)</span></li>
+    </ol>
+
+    <a class="backlink" href="index.html">← <span class="cn">返回姊妹篇：作业 01 · EH216-S 全方位调研与分析</span><span class="en">Back to Coursework 01 · Comprehensive Review</span></a>
+
+
+
+  </article>
+
+  <aside class="rail" aria-label="证据与阅读提示">
+    <p class="rail-title"><span class="cn">证据分级 / Evidence grades</span><span class="en">Evidence grades</span></p>
+    <ul>
+      <li><strong>E1 · 标准/局方</strong><span class="cn">ISO、SAE、RTCA 标准与局方公开信息。<br>可核验的最高等级。</span><span class="en">Standards and regulatory information.</span></li>
+      <li><strong>E2 · 交叉核验</strong><span class="cn">权威媒体、百科与参数库；用于识别口径冲突。</span><span class="en">Media and databases for cross-checking.</span></li>
+      <li><strong>E3 · 课程框架</strong><span class="cn">课件第四、五章的系统安全工程、产业与标准框架。</span><span class="en">Course frameworks from Chapters 4–5.</span></li>
+      <li><strong>E4 · 教学推演</strong><span class="cn">本页危害清单、FMEA、FTA、风险矩阵、GSN 与所有图示，<b>非审定结论</b>。</span><span class="en">All original analyses and diagrams; <b>not certification findings</b>.</span></li>
+    </ul>
+    <p class="rail-title" style="margin-top:26px"><span class="cn">五类安全 / Five safety classes</span><span class="en">Five safety classes</span></p>
+    <ul>
+      <li><span class="legend"><span style="background:#e8eff2"></span></span><span class="cn"><b>被动安全</b>　碰撞后保护乘员</span><span class="en"><b>Passive</b> occupant protection</span></li>
+      <li><span class="legend"><span style="background:#dfe5e7"></span></span><span class="cn"><b>功能安全</b>　E/E 故障</span><span class="en"><b>FuSa</b> E/E failures</span></li>
+      <li><span class="legend"><span style="background:#faf3e9"></span></span><span class="cn"><b>预期功能安全</b>　性能局限与误用</span><span class="en"><b>SOTIF</b> limitations &amp; misuse</span></li>
+      <li><span class="legend"><span style="background:#eef5f0"></span></span><span class="cn"><b>行为安全</b>　交互与行为假设</span><span class="en"><b>Behaviour</b> interaction assumptions</span></li>
+      <li><span class="legend"><span style="background:#faf0ef"></span></span><span class="cn"><b>信息安全</b>　外部攻击与电磁</span><span class="en"><b>Security</b> attacks &amp; EMI</span></li>
+    </ul>
+    <p class="rail-title" style="margin-top:26px"><span class="cn">阅读提示 / Reading notes</span><span class="en">Reading notes</span></p>
+    <ul>
+      <li><span class="cn">本页与作业 01 共用研究对象、参数口径与证据分级。</span><span class="en">Shares subject, parameters and grading with Coursework 01.</span></li>
+      <li><span class="cn">点击图片可放大；顶部 EN 按钮切换中英表述。</span><span class="en">Click figures to enlarge; EN switches language.</span></li>
+    </ul>
+  </aside>
+
+</div>
+
+<footer class="fv-footer">
+  <div class="container footer-grid">
+    <div>
+      <h5><span class="cn">关于本页</span><span class="en">About this page</span></h5>
+      <p><span class="cn">《飞行汽车技术基础》课程作业 02：针对飞行汽车某技术/产品的全方位安全分析。研究对象与作业 01 一致，为亿航 EH216-S 无人驾驶载人 eVTOL；分析框架依据课件第五章的系统安全工程过程，所有危害与失效分析均为教学推演并已明确标注。图片均标注来源与许可协议。</span><span class="en">Coursework 02: comprehensive safety analysis of the EHang EH216-S, applying Chapter 5's safety systems engineering process. All hazard and failure analyses are explicitly labelled teaching exercises. Images are credited with source and licence.</span></p>
+      <p><span class="cn">课件依据：张玉新《第四章 飞行汽车的现状及展望》《第五章 飞行汽车产业分析及支撑技术》<sup><a class="cite" href="#r20">[20]</a></sup><sup><a class="cite" href="#r21">[21]</a></sup>；方法结构参照课程案例页面<sup><a class="cite" href="#r22">[22]</a></sup>。</span><span class="en">Course material: Chapters 4 and 5 [20][21]; structure follows the course reference case [22].</span></p>
+    </div>
+    <div>
+      <h5><span class="cn">作业导航 / Assignments</span><span class="en">Assignments</span></h5>
+      <p><a href="index.html">01 · 全方位调研与分析</a></p>
+      <p><a href="safety.html">02 · 全方位安全分析（本页）</a></p>
+      <p><span class="cn">证据截止 2026-11-26　|　版本 1.0　|　中英双语</span><span class="en">Evidence cut-off 26 Nov 2026 · v1.0 · bilingual</span></p>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>Automated Vehicles Safety · Coursework 02</span>
+    <span>EH216-S Safety Systems Engineering · Evidence-graded, E4 teaching analysis</span>
+  </div>
+</footer>
+
+<button class="backtop" aria-label="返回顶部">↑</button>
+<script src="assets/app.js"></script>
+</body>
+</html>

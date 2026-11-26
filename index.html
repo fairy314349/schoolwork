@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亿航 EH216-S：技术可行性、应用场景与市场可行性 | 飞行汽车技术基础 · 课程作业 01</title>
+<meta name="description" content="以系统综述式案例评估方法，对亿航 EH216-S 无人驾驶载人 eVTOL 的发展路径、系统架构、适航审定、应用场景与市场可行性进行证据分级的深度调研。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23102d3c'/%3E%3Ctext x='16' y='21' font-size='13' fill='white' text-anchor='middle' font-family='monospace'%3EFV%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress"></div>
+
+<nav class="lab-nav">
+  <div class="lab-nav-inner">
+    <a class="lab-nav-logo" href="index.html"><span class="mark">FV</span><span>飞行汽车技术基础</span></a>
+    <button class="lab-nav-toggle" onclick="toggleNav()" aria-label="打开导航"><span></span><span></span><span></span></button>
+    <ul class="lab-nav-links">
+      <li><a href="index.html" class="active"><span>作业 01 · 调研分析</span><span class="en-sub">Case Study</span></a></li>
+      <li><a href="safety.html"><span>作业 02 · 安全分析</span><span class="en-sub">Safety Analysis</span></a></li>
+      <li><a href="#method"><span>方法</span><span class="en-sub">Method</span></a></li>
+      <li><a href="#technology"><span>技术</span><span class="en-sub">Technology</span></a></li>
+      <li><a href="#scenarios"><span>场景</span><span class="en-sub">Scenarios</span></a></li>
+      <li><a href="#market"><span>市场</span><span class="en-sub">Market</span></a></li>
+      <li><a href="#references"><span>参考文献</span><span class="en-sub">References</span></a></li>
+      <li class="nav-sep"></li>
+      <li><button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="switcher">
+  <div class="switcher-inner">
+    <a class="switcher-tab current" href="index.html"><span class="num">01</span><span>全方位调研与分析 <span class="en" style="display:none">/ Comprehensive Review</span></span></a>
+    <a class="switcher-tab" href="safety.html"><span class="num">02</span><span>全方位安全分析 / Safety Analysis</span></a>
+    <span class="switcher-meta">EVIDENCE CUT-OFF 2026-11-26 &nbsp;·&nbsp; V1.0</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="kicker"><span class="cn">飞行汽车技术基础 · 课程作业 01 · 案例研究</span><span class="en">Fundamentals of Flying Vehicle Technology · Coursework 01 · Case Study</span></p>
+      <h1>
+        <span class="cn">亿航 EH216-S：<br>技术可行性、应用场景与市场可行性</span>
+        <span class="en">EHang EH216-S:<br>Technical Feasibility, Operational Scenarios and Market Feasibility</span>
+        <span class="sub-en">A system-review-informed case assessment of the world's first type-certificated pilotless passenger-carrying eVTOL</span>
+      </h1>
+      <p class="deck cn">它既不是被夸大宣传的"空中出租车已普及"，也不是可以忽略的技术演示。真正值得研究的是：八轴十六旋翼全冗余构型、预设航线的无人驾驶运行方式、"一事一议"的适航专用条件，以及低空文旅这一狭窄但真实的落地场景，如何共同定义一个<strong>限定包线、限定场景、限定规模</strong>的商业化初期产品。</p>
+      <p class="deck en">Neither a mass-market air taxi nor a dismissible technology demo. What deserves study is how a fully redundant 16-rotor layout, pre-programmed pilotless operations, a bespoke certification basis, and a narrow low-altitude tourism niche jointly define an early-stage product with a deliberately limited envelope.</p>
+    </div>
+    <figure class="hero-figure">
+      <img src="assets/img/eh216s-paris-2025.jpg" alt="2025 年巴黎航展户外展区静态展示的亿航 EH216-S 无人驾驶载人 eVTOL 实机">
+      <figcaption>
+        <span class="cn">题图：2025 年巴黎航展（Salon du Bourget）户外展区静态展示的 EH216-S 实机。摄影：Artvill，<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>，来源 <a href="https://commons.wikimedia.org/wiki/File:EHang_216-S_au_Salon_du_Bourget_2025.jpg" target="_blank" rel="noopener">Wikimedia Commons</a><sup><a class="cite" href="#r30">[30]</a></sup>。图片仅用于识别研究对象与总体构型，不能替代型号合格证数据单与工程样车参数。</span>
+        <span class="en">Hero image: EH216-S on static display at the 2025 Paris Air Show. Photo: Artvill, CC BY 4.0, via Wikimedia Commons [30]. For identification only; not a substitute for the approved type-certificate data sheet.</span>
+      </figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="container shell">
+
+  <nav class="toc" aria-label="文章目录">
+    <p class="toc-title"><span class="cn">文章目录 / Contents</span><span class="en">Contents</span></p>
+    <ol>
+      <li><a href="#summary"><span class="tn">00</span><span class="cn">执行摘要</span><span class="en">Executive summary</span></a></li>
+      <li><a href="#method"><span class="tn">01</span><span class="cn">研究设计与证据边界</span><span class="en">Method &amp; evidence</span></a></li>
+      <li><a href="#path"><span class="tn">02</span><span class="cn">发展路径与取证时间轴</span><span class="en">Development path</span></a></li>
+      <li><a href="#product"><span class="tn">03</span><span class="cn">产品定义与型号谱系</span><span class="en">Product definition</span></a></li>
+      <li><a href="#technology"><span class="tn">04</span><span class="cn">系统架构与关键技术</span><span class="en">Architecture</span></a></li>
+      <li><a href="#physics"><span class="tn">05</span><span class="cn">性能边界与物理约束</span><span class="en">Performance envelope</span></a></li>
+      <li><a href="#certification"><span class="tn">06</span><span class="cn">适航审定与监管框架</span><span class="en">Certification</span></a></li>
+      <li><a href="#scenarios"><span class="tn">07</span><span class="cn">应用场景与落地路径</span><span class="en">Scenarios</span></a></li>
+      <li><a href="#market"><span class="tn">08</span><span class="cn">市场可行性分析</span><span class="en">Market feasibility</span></a></li>
+      <li><a href="#competitors"><span class="tn">09</span><span class="cn">竞品与技术路线比较</span><span class="en">Competitors</span></a></li>
+      <li><a href="#roadmap"><span class="tn">10</span><span class="cn">工程化与规模化路线</span><span class="en">Roadmap</span></a></li>
+      <li><a href="#coursework"><span class="tn">11</span><span class="cn">课程延伸：调研方法复盘</span><span class="en">Course extension</span></a></li>
+      <li><a href="#limits"><span class="tn">12</span><span class="cn">局限、未决问题与结论</span><span class="en">Limitations</span></a></li>
+      <li><a href="#references"><span class="tn">13</span><span class="cn">参考文献</span><span class="en">References</span></a></li>
+    </ol>
+    <p class="toc-foot"><span class="cn">姊妹篇：<a href="safety.html">作业 02 · EH216-S 全方位安全分析</a>，基于同一研究对象展开系统安全工程分析。</span><span class="en">Companion paper: <a href="safety.html">Coursework 02 — Safety Analysis</a>.</span></p>
+  </nav>
+
+  <article class="article">
+
+    <!-- ============ 00 执行摘要 ============ -->
+    <section id="summary">
+      <h2 id="executive-heading"><span class="h2-num">SECTION 00</span><span class="cn">执行摘要</span><span class="en">Executive Summary</span></h2>
+
+      <div class="executive">
+        <h2><span class="cn">六条核心判断</span><span class="en">Six core judgements</span></h2>
+        <ol>
+          <li><span class="cn"><strong>产品定性：</strong>EH216-S 是一款<strong>取得适航四证</strong>（型号合格证 TC、标准适航证 AC、生产许可证 PC、运营合格证 OC）的双座、纯电、多旋翼、预设航线无人驾驶载人航空器；它不是通用 eVTOL 的完成形态，而是"限定场景 + 限定运行包线"的低空载人平台<sup><a class="cite" href="#r1">[1]</a></sup><sup><a class="cite" href="#r2">[2]</a></sup><sup><a class="cite" href="#r6">[6]</a></sup>。</span><span class="en"><strong>Product definition:</strong> EH216-S is a two-seat, battery-electric multirotor aircraft flying pre-programmed routes, holding four CAAC approvals (TC, AC, PC, OC) [1][2][6]. It is a constrained low-altitude platform, not a general-purpose mature eVTOL.</span></li>
+          <li><span class="cn"><strong>技术可行性：</strong>八轴十六旋翼分布式电推进、关键飞行部件全备份、地面指挥调度系统构成的技术闭环已通过局方审定，证明<strong>构型与冗余设计在限定包线内工程可实现</strong>；但 30 km 设计航程、25 min 续航与 200 m 级运行高度，决定了它尚不满足规模化城市通勤所需的载荷—航程门槛<sup><a class="cite" href="#r7">[7]</a></sup><sup><a class="cite" href="#r22">[22]</a></sup>。</span><span class="en"><strong>Technical feasibility:</strong> A 16-rotor distributed electric propulsion layout with full redundancy of critical flight components passed regulatory review, proving engineering feasibility within a limited envelope. A 30 km design range and 25 min endurance remain below the threshold for scaled urban commuting [7][22].</span></li>
+          <li><span class="cn"><strong>监管是比气动更硬的约束：</strong>无人驾驶载人在全球范围内缺少可复用的成熟审定范式。CAAC 以"专用条件"完成个案突破，EASA 以 SC-VTOL-01 建立普适框架，FAA 以 AAM 战略与 powered-lift 规则推进；<strong>三套体系的互认与协调，比旋翼效率更决定商业化速度</strong><sup><a class="cite" href="#r9">[9]</a></sup><sup><a class="cite" href="#r10">[10]</a></sup><sup><a class="cite" href="#r11">[11]</a></sup><sup><a class="cite" href="#r22">[22]</a></sup>。</span><span class="en"><strong>Regulation, not aerodynamics, is the binding constraint:</strong> pilotless passenger flight lacks a reusable global certification template. CAAC used bespoke special conditions, EASA issued SC-VTOL-01, and FAA advances powered-lift rules under its AAM strategy [9][10][11][22].</span></li>
+          <li><span class="cn"><strong>应用场景：</strong>近期最现实的是<strong>低空文旅与城市观光</strong>，其后是枢纽接驳与应急/警务等专业场景；城市通勤、城际出行、即时物流在现有包线、法规与成本结构下<strong>不成立</strong>。这与课件第五章"专业化与大众化双线并行、低空文旅先行"的判断一致<sup><a class="cite" href="#r22">[22]</a></sup><sup><a class="cite" href="#r5">[5]</a></sup>。</span><span class="en"><strong>Scenarios:</strong> low-altitude sightseeing is the only near-term viable commercial scenario, followed by hub connection and public-safety missions. Urban commuting, intercity travel and parcel logistics are not supported [22][5].</span></li>
+          <li><span class="cn"><strong>市场可行性：</strong>239 万元/架的官方指导价、示范项目主导的 B/G 端采购、明确但狭窄的收入模型，使其定位为<strong>低产量、高话题性、以示范运营牵引产业链成熟</strong>的早期业务；本文的敏感性测算为教学估算，不构成收入预测<sup><a class="cite" href="#r3">[3]</a></sup><sup><a class="cite" href="#r4">[4]</a></sup>。</span><span class="en"><strong>Market feasibility:</strong> a RMB 2.39 M list price and demonstration-led B/G procurement define an early, low-volume business. The sensitivity analysis below is a teaching estimate, not a forecast [3][4].</span></li>
+          <li><span class="cn"><strong>方法论启示：</strong>越是被"全球首张""四证齐全"等标题冲击，越需要把<strong>演示 / 取证 / 商业运营 / 规模化盈利</strong>拆成四层分别举证，并为每一个数字标注来源等级<sup><a class="cite" href="#r23">[23]</a></sup>。</span><span class="en"><strong>Methodological lesson:</strong> headline claims such as "world's first" require separating demonstration, certification, commercial operation and scaled profitability, with a source grade attached to every number [23].</span></li>
+        </ol>
+      </div>
+
+      <div class="stat-band" aria-label="关键数字">
+        <div><strong>16<span class="unit"> 旋翼</span></strong><span><span class="cn">八轴共轴双桨，全备份动力布局</span><span class="en">Eight coaxial arms, fully redundant propulsion</span></span></div>
+        <div><strong>30<span class="unit"> km</span></strong><span><span class="cn">公开设计航程，非实际运营航程</span><span class="en">Published design range, not route length</span></span></div>
+        <div><strong>4<span class="unit"> 证</span></strong><span><span class="cn">TC / AC / PC / OC，2023—2025 陆续取得</span><span class="en">TC / AC / PC / OC, 2023–2025</span></span></div>
+        <div><strong>239<span class="unit"> 万元</span></strong><span><span class="cn">中国市场官方指导价（2024-04 生效）</span><span class="en">China list price, effective April 2024</span></span></div>
+      </div>
+      <p class="small"><span class="cn">数据来源：亿航智能官方新闻稿<sup><a class="cite" href="#r2">[2]</a></sup><sup><a class="cite" href="#r3">[3]</a></sup><sup><a class="cite" href="#r4">[4]</a></sup>、第三方参数数据库与百科交叉核验<sup><a class="cite" href="#r6">[6]</a></sup><sup><a class="cite" href="#r7">[7]</a></sup>。不同来源对最大起飞重量（620 / 650 kg）与机身尺寸存在口径差异，见 03 节表 3。</span><span class="en">Sources: EHang press releases [2][3][4], cross-checked against third-party databases [6][7]. Published figures for MTOW and dimensions differ between sources; see Table 3.</span></p>
+    </section>
+
+    <!-- ============ 01 方法 ============ -->
+    <h2 id="method"><span class="h2-num">SECTION 01</span><span class="cn">研究设计与证据边界</span><span class="en">Research Design and Evidence Boundary</span></h2>
+
+    <p class="lead cn">本文采用<strong>系统综述式案例评估</strong>（systematic-review-informed case assessment），而非宣称完成了一项多评审员、全数据库的正式系统综述。研究过程为：问题界定 → 检索协议 → 来源分级 → 证据矩阵 → 工程评估 → 场景与市场敏感性分析。研究对象限定为 EH216-S 无人驾驶载人航空器系统及其衍生平台，时间范围为 2016 年概念发布至 2026 年 11 月 26 日。</p>
+    <p class="lead en">This article applies a systematic-review-informed case assessment: question framing, search protocol, source grading, evidence matrix, engineering evaluation, and scenario/market sensitivity analysis. Scope: the EH216-S system and derivatives, 2016 to 26 November 2026.</p>
+
+    <p class="cn">课件第四章以"如何快速深入了解一个全新技术领域"为例，给出从行业媒体、企业与产品调研、综述性论文与研究报告，到学术论文、专利、标准法规、生产与运营的递进路径<sup><a class="cite" href="#r21">[21]</a></sup>。本文将这一路径落实为可审计的检索协议，并对每一类结论标注证据等级；所有教学估算单独标记为 E4，不与官方数据混用。</p>
+    <p class="en">Following the staged research path taught in Chapter 4 [21], the protocol below is made auditable. Every conclusion carries an evidence grade; teaching estimates are marked E4 and never mixed with official data.</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 1　检索策略与来源类别（Table 1 · Search protocol and source categories）</span><span class="en">Table 1 · Search protocol and source categories</span></caption>
+        <thead><tr>
+          <th><span class="cn">类别</span><span class="en">Category</span></th>
+          <th><span class="cn">检索对象</span><span class="en">Sources queried</span></th>
+          <th><span class="cn">用途</span><span class="en">Purpose</span></th>
+          <th><span class="cn">等级</span><span class="en">Grade</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span class="cn">局方与法规</span><span class="en">Regulator</span></td><td><span class="cn">中国民航局专用条件、EASA SC-VTOL-01、FAA AAM 文件、国务院/中央军委条例</span><span class="en">CAAC special conditions, EASA SC-VTOL-01, FAA AAM documents, national regulations</span></td><td><span class="cn">审定路径、适航要求、运行规则</span><span class="en">Certification basis and operating rules</span></td><td><span class="cn">E1</span><span class="en">E1</span></td></tr>
+          <tr><td><span class="cn">企业一手披露</span><span class="en">Manufacturer</span></td><td><span class="cn">亿航智能官网新闻稿、投资者关系公告、产品页</span><span class="en">EHang press releases, investor releases, product pages</span></td><td><span class="cn">取证日期、指导价、产品定位</span><span class="en">Approval dates, list price, positioning</span></td><td><span class="cn">E1*</span><span class="en">E1*</span></td></tr>
+          <tr><td><span class="cn">权威媒体与百科</span><span class="en">Media / encyclopaedia</span></td><td><span class="cn">人民网、行业媒体、百科词条、参数数据库</span><span class="en">People's Daily, trade press, encyclopaedias, spec databases</span></td><td><span class="cn">交叉核验参数、运营进展、公开数据冲突识别</span><span class="en">Cross-checking specifications and operating status</span></td><td><span class="cn">E2</span><span class="en">E2</span></td></tr>
+          <tr><td><span class="cn">学术与标准</span><span class="en">Academic / standards</span></td><td><span class="cn">综述论文、飞行汽车发展报告、ISO / SAE / RTCA 标准</span><span class="en">Review papers, industry roadmaps, ISO/SAE/RTCA standards</span></td><td><span class="cn">技术瓶颈、产业链结构、安全工程框架</span><span class="en">Technical bottlenecks, supply chain, safety framework</span></td><td><span class="cn">E3</span><span class="en">E3</span></td></tr>
+          <tr><td><span class="cn">本文计算与图示</span><span class="en">This article</span></td><td><span class="cn">敏感性测算、能力层级划分、构型与流程示意</span><span class="en">Sensitivity estimates, capability levels, original diagrams</span></td><td><span class="cn">教学推演，明确标注为估算</span><span class="en">Teaching estimates, explicitly labelled</span></td><td><span class="cn">E4</span><span class="en">E4</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small"><span class="cn">* 企业披露属于一手来源，但含市场宣传属性；凡涉及"全球首张""超 5 万架次安全试飞"等表述，本文均降级为 E2 并寻找局方或第三方交叉印证。排除规则：无出处的社交媒体帖子、影视特效画面、无法追溯的宣传渲染图、未经核验的参数聚合页。</span><span class="en">* Manufacturer disclosures are primary but promotional; superlatives are downgraded to E2 pending corroboration. Excluded: unsourced social posts, CGI/renders, unverifiable aggregator specs.</span></p>
+
+    <div class="callout note">
+      <strong><span class="cn">证据边界声明</span><span class="en">Evidence boundary</span></strong>
+      <p class="cn">型号合格证数据单（TCDS）、专用条件全文、飞行手册限制章节与运营规范属于非公开或受限文件。本文所能引用的性能参数主要来自企业披露与第三方汇编，因此<strong>所有性能数字均应视为"公开口径"而非"审定值"</strong>。这一限制在 05 节物理边界分析与作业 02 安全分析中同样适用。</p>
+      <p class="en">The approved type-certificate data sheet, full special conditions and flight-manual limitations are not publicly accessible. All performance figures here are published claims, not certified values; the same limitation applies to the companion safety analysis.</p>
+    </div>
+
+    <!-- ============ 02 发展路径 ============ -->
+    <h2 id="path"><span class="h2-num">SECTION 02</span><span class="cn">发展路径与取证时间轴</span><span class="en">Development Path and Certification Timeline</span></h2>
+
+    <p class="cn">EH216-S 的发展可以分为三段：<strong>概念与验证期</strong>（2016—2020）、<strong>审定与取证期</strong>（2020—2025）、<strong>示范运营期</strong>（2025 起）。与许多停留在原型阶段的 eVTOL 项目不同，它完成了从设计批准到生产批准再到运行批准的完整闭环，这正是本案例最具研究价值的部分<sup><a class="cite" href="#r2">[2]</a></sup><sup><a class="cite" href="#r6">[6]</a></sup>。</p>
+    <p class="en">Three phases: concept and validation (2016–2020), type certification (2020–2025), and demonstration operations (from 2025). Unlike many eVTOL prototypes, it closed the full loop from design approval to production and operating approval [2][6].</p>
+
+    <div class="timeline six" aria-label="EH216-S 发展时间轴">
+      <div><time>2016</time><strong><span class="cn">EH184 概念发布</span><span class="en">EH184 unveiled</span></strong><span><span class="cn">CES 展出单座载人原型，确立无人驾驶多旋翼路线</span><span class="en">Single-seat concept at CES</span></span></div>
+      <div><time>2018</time><strong><span class="cn">公开载人飞行</span><span class="en">Public passenger flight</span></strong><span><span class="cn">完成公开载人试飞与首架交付，进入工程验证</span><span class="en">First public passenger flight</span></span></div>
+      <div><time>2020.12</time><strong><span class="cn">TC 申请受理</span><span class="en">TC application</span></strong><span><span class="cn">向 CAAC 提交型号合格证申请，审定周期开启</span><span class="en">Application filed with CAAC</span></span></div>
+      <div><time>2023.10</time><strong><span class="cn">获颁 TC</span><span class="en">Type Certificate</span></strong><span><span class="cn">10 月 13 日获型号合格证，全球首张无人驾驶载人 eVTOL TC</span><span class="en">13 Oct: first TC for a pilotless passenger eVTOL</span></span></div>
+      <div><time>2023.12</time><strong><span class="cn">AC + 商业演示</span><span class="en">AC &amp; demo</span></strong><span><span class="cn">12 月 21 日获标准适航证；28 日广州、合肥完成商业飞行演示</span><span class="en">21 Dec AC; 28 Dec commercial demo flights</span></span></div>
+      <div><time>2024—2026</time><strong><span class="cn">PC / OC / 运营</span><span class="en">PC / OC / ops</span></strong><span><span class="cn">2024-04 PC；2025-03 首批 OC；示范点扩展与海外首飞</span><span class="en">Apr 2024 PC; Mar 2025 OC; demo sites expand</span></span></div>
+    </div>
+    <p class="small"><span class="cn">图 1　发展路径时间轴。节点依据企业公告与百科交叉核验整理<sup><a class="cite" href="#r2">[2]</a></sup><sup><a class="cite" href="#r3">[3]</a></sup><sup><a class="cite" href="#r6">[6]</a></sup>；时间轴表示产品与审定状态变化，不代表量产成熟度或盈利水平。</span><span class="en">Figure 1 · Development timeline. It maps product and approval status, not production maturity or profitability [2][3][6].</span></p>
+
+    <div class="photo-strip">
+      <figure>
+        <img src="assets/img/eh216-nc-2020.jpg" alt="2020 年美国北卡罗来纳州交通峰会上展示的亿航 EH216 载人航空器">
+        <figcaption><span class="cn">2020 年 1 月，美国北卡罗来纳州交通峰会上的 EH216 展示与文件交接。摄影：NCDOTcommunications，<a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>，Wikimedia Commons<sup><a class="cite" href="#r31">[31]</a></sup>。可用于观察早期构型与座舱造型。</span><span class="en">EH216 demonstration at the 2020 North Carolina Transportation Summit. Photo: NCDOTcommunications, CC BY 2.0 [31].</span></figcaption>
+      </figure>
+      <figure>
+        <img src="assets/img/eh216-spec-plate.jpg" alt="EH216 展示现场的规格铭牌特写">
+        <figcaption><span class="cn">展示现场的规格铭牌，可见构型与参数标注。摄影：David Perez，<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a>，Wikimedia Commons<sup><a class="cite" href="#r32">[32]</a></sup>。铭牌为展示件，不等同于审定数据单。</span><span class="en">Exhibition specification plate. Photo: David Perez, CC0 [32]. Display material, not an approved data sheet.</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 2　关键里程碑与证据状态（Table 2 · Milestones and evidence status）</span><span class="en">Table 2 · Milestones and evidence status</span></caption>
+        <thead><tr><th><span class="cn">日期</span><span class="en">Date</span></th><th><span class="cn">事件</span><span class="en">Event</span></th><th><span class="cn">含义</span><span class="en">Meaning</span></th><th><span class="cn">证据状态</span><span class="en">Evidence</span></th></tr></thead>
+        <tbody>
+          <tr><td class="num">2023-10-13</td><td><span class="cn">型号合格证 TC</span><span class="en">Type Certificate</span></td><td><span class="cn">型号设计符合审定基础，是投产、注册与投入使用的前提</span><span class="en">Design complies with the certification basis</span></td><td><span class="tag official">E1 · 局方</span></td></tr>
+          <tr><td class="num">2023-12-21</td><td><span class="cn">标准适航证 AC</span><span class="en">Standard Airworthiness Certificate</span></td><td><span class="cn">单机具备适航状态；同月完成首批交付与商业飞行演示</span><span class="en">Individual aircraft airworthiness; first deliveries</span></td><td><span class="tag official">E1 · 局方</span></td></tr>
+          <tr><td class="num">2024-04-07</td><td><span class="cn">生产许可证 PC</span><span class="en">Production Certificate</span></td><td><span class="cn">授权按批准设计批量生产，要求全流程质量控制体系</span><span class="en">Series production under an approved quality system</span></td><td><span class="tag official">E1 · 局方</span></td></tr>
+          <tr><td class="num">2025-03-28</td><td><span class="cn">运营合格证 OC</span><span class="en">Operating Certificate</span></td><td><span class="cn">审核运营主体持续安全运行能力，商业载人服务具备准入条件</span><span class="en">Operator approved for commercial passenger service</span></td><td><span class="tag official">E1 / E2</span></td></tr>
+          <tr><td class="num">2024-02-01</td><td><span class="cn">公布指导价 239 万元</span><span class="en">RMB 2.39 M list price</span></td><td><span class="cn">2024-04-01 生效，为需求筛选与商业模式锚点</span><span class="en">Effective 1 Apr 2024; anchors the business case</span></td><td><span class="tag official">E1* · 企业</span></td></tr>
+          <tr><td class="num">2024—2026</td><td><span class="cn">海外试飞与区域示范</span><span class="en">Overseas demo flights</span></td><td><span class="cn">多地完成首飞或示范点布局，尚非正式商业运营</span><span class="en">Demonstrations, not certified commercial service</span></td><td><span class="tag pending">E2 · 待核验</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cn">需要特别区分三个常被混用的概念：<strong>取证</strong>（设计/生产/单机获得批准）、<strong>商业运营准入</strong>（运营主体获得批准）、<strong>规模化盈利</strong>（单位经济模型成立）。EH216-S 已完成前两者，第三者在公开信息中尚无充分证据。课件第五章同样指出，当前阶段的核心任务"不是全面放量，而是通过示范运营推动产业链协同成熟"<sup><a class="cite" href="#r22">[22]</a></sup>。</p>
+    <p class="en">Three concepts must be separated: certification of design/production/aircraft, approval of the operator, and profitable scale. EH216-S has achieved the first two; the third lacks public evidence [22].</p>
+
+    <!-- ============ 03 产品定义 ============ -->
+    <h2 id="product"><span class="h2-num">SECTION 03</span><span class="cn">产品定义与型号谱系</span><span class="en">Product Definition and Model Family</span></h2>
+
+    <p class="cn">按课件第五章采用的定义，飞行汽车是"面向空地一体交通的电动垂直起降飞行器，包含纯飞式、分体式和两栖式三种产品形态"<sup><a class="cite" href="#r22">[22]</a></sup>。EH216-S 属于其中的<strong>纯飞式</strong>：不具备地面行驶能力，因此在道路车辆法规与航空法规的衔接上，反而比两栖式构型更少冲突，这是它能够较早完成取证的结构性原因之一。</p>
+    <p class="en">Under the definition used in Chapter 5, flying vehicles include pure-flight, modular and amphibious forms [22]. EH216-S is a pure-flight aircraft: with no road mode, it avoids much of the land/air regulatory conflict that slows amphibious designs.</p>
+
+    <div class="photo-grid">
+      <figure class="wide">
+        <img src="assets/img/eh216-general.jpg" alt="EH216 整机斜前视角，可见八轴十六旋翼与中央双座座舱">
+        <figcaption><span class="cn">整机斜前视角：中央双座座舱、八条机臂、共轴双旋翼动力单元与滑橇式起落架清晰可见。摄影：David Perez，CC0，Wikimedia Commons<sup><a class="cite" href="#r33">[33]</a></sup>。</span><span class="en">Overall view: central two-seat cabin, eight arms with coaxial rotor units and skid landing gear. Photo: David Perez, CC0 [33].</span></figcaption>
+      </figure>
+      <figure class="wide">
+        <img src="assets/img/eh216-coaxial-motors.jpg" alt="EH216 共轴双旋翼电机单元特写">
+        <figcaption><span class="cn">共轴双旋翼电机单元特写：上下两层桨叶共用一根机臂，构成 8 轴 16 旋翼的动力布局。摄影：David Perez，CC0，Wikimedia Commons<sup><a class="cite" href="#r34">[34]</a></sup>。</span><span class="en">Coaxial rotor unit: two contra-rotating propellers per arm, forming the 8-arm/16-rotor layout. Photo: David Perez, CC0 [34].</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 3　公开参数与口径差异（Table 3 · Published parameters and discrepancies）</span><span class="en">Table 3 · Published parameters and discrepancies</span></caption>
+        <thead><tr><th><span class="cn">参数</span><span class="en">Parameter</span></th><th><span class="cn">公开数值</span><span class="en">Published value</span></th><th><span class="cn">口径说明</span><span class="en">Note</span></th><th><span class="cn">等级</span><span class="en">Grade</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">构型</span><span class="en">Configuration</span></td><td class="num">8 轴 / 16 旋翼</td><td><span class="cn">纯电多旋翼、共轴双桨、无倾转机构、无固定翼</span><span class="en">Pure multirotor, coaxial pairs, no tilt mechanism or wing</span></td><td>E2</td></tr>
+          <tr><td><span class="cn">载客</span><span class="en">Occupants</span></td><td class="num">2 人（无驾驶员）</td><td><span class="cn">预设航线自主飞行，地面指挥调度中心监控</span><span class="en">Pre-programmed route, monitored from a ground control centre</span></td><td>E1* / E2</td></tr>
+          <tr><td><span class="cn">最大起飞重量</span><span class="en">MTOW</span></td><td class="num">620 / 650 kg</td><td><span class="cn"><strong>来源冲突：</strong>第三方参数库为 620 kg，百科词条为 650 kg；本文采用 620 kg 并标注不确定</span><span class="en"><strong>Conflict:</strong> 620 kg vs 650 kg across sources; 620 kg used here with an uncertainty flag</span></td><td>E2</td></tr>
+          <tr><td><span class="cn">设计航程 / 续航</span><span class="en">Range / endurance</span></td><td class="num">30 km / 25 min</td><td><span class="cn">设计值，不是获批航线长度；受温度、风速、载荷与余量影响</span><span class="en">Design values, not approved route length; affected by temperature, wind, payload and reserves</span></td><td>E2</td></tr>
+          <tr><td><span class="cn">速度</span><span class="en">Speed</span></td><td class="num">130 km/h（最大设计）</td><td><span class="cn">巡航约 90 km/h；另有 105 km/h 不可超越速度口径</span><span class="en">~90 km/h cruise; V<sub>NE</sub> 105 km/h also reported</span></td><td>E2</td></tr>
+          <tr><td><span class="cn">机身尺寸</span><span class="en">Dimensions</span></td><td class="num">6.05 × 5.73 × 1.93 m</td><td><span class="cn">长 × 宽 × 高；部分来源仅给 5.73 m 长，疑为宽度口径混用</span><span class="en">L × W × H; some sources quote 5.73 m as length, likely a width/length mix-up</span></td><td>E2</td></tr>
+          <tr><td><span class="cn">运行环境</span><span class="en">Environment</span></td><td class="num">5—40 ℃</td><td><span class="cn">公开参数库列出的环境温度限制，需以飞行手册为准</span><span class="en">Published ambient temperature limit; flight manual governs</span></td><td>E2</td></tr>
+          <tr><td><span class="cn">指导价</span><span class="en">List price</span></td><td class="num">RMB 2,390,000</td><td><span class="cn">中国市场官方指导价，2024-04-01 生效，不含运营与基础设施成本</span><span class="en">China list price effective 1 Apr 2024, excluding operations and infrastructure</span></td><td>E1*</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <strong><span class="cn">关于"参数冲突"的处理原则</span><span class="en">Handling conflicting specifications</span></strong>
+      <p class="cn">公开资料中 620 kg 与 650 kg 两种最大起飞重量并存，机身长度与宽度也存在混用。本文不挑选"看起来更权威"的数字，而是<strong>保留冲突、标注等级、并在所有推导中采用保守值</strong>。这与参考案例对"演示参数 / 产品参数 / 安全参数"三层划分的处理一致<sup><a class="cite" href="#r23">[23]</a></sup>。</p>
+      <p class="en">Where sources disagree (620 vs 650 kg MTOW), the conflict is retained and graded, and conservative values are used in all derivations — consistent with the three-layer parameter split in the reference case [23].</p>
+    </div>
+
+    <h3><span class="cn">3.1　型号谱系与平台化</span><span class="en">3.1 Model family and platform strategy</span></h3>
+    <p class="cn">同一机体平台衍生出面向不同任务的型号，是降低审定与制造边际成本的常见做法。公开资料可辨识的谱系包括载人型 EH216-S、消防型 EH216-F、物流型 EH216-L，以及航程更长的复合翼构型 VT 系列。需要注意，衍生型号并不自动继承 EH216-S 的 TC，通常需补充审定或单独取证<sup><a class="cite" href="#r8">[8]</a></sup>。</p>
+    <p class="en">Derivatives on a common airframe reduce certification and manufacturing cost. Publicly identifiable variants include the passenger EH216-S, firefighting EH216-F, logistics EH216-L, and longer-range compound-wing VT series. Derivatives do not automatically inherit the EH216-S TC [8].</p>
+
+    <div class="cards three">
+      <div class="card accent"><span class="idx">EH216-S</span><h4><span class="cn">载人旗舰型</span><span class="en">Passenger flagship</span></h4><p><span class="cn">双座、预设航线无人驾驶，唯一完成四证闭环的型号，定位低空观光与短途接驳。</span><span class="en">Two-seat pilotless flagship; the only variant with all four approvals.</span></p><p class="foot"><span class="cn">证据：E1 + E2</span><span class="en">Evidence: E1 + E2</span></p></div>
+      <div class="card"><span class="idx">EH216-F / L</span><h4><span class="cn">专业任务衍生型</span><span class="en">Mission derivatives</span></h4><p><span class="cn">面向高层消防与短途物资运输，去掉载客约束后可在更宽松的风险边界内验证平台可靠性。</span><span class="en">Firefighting and cargo variants validate platform reliability under different risk boundaries.</span></p><p class="foot"><span class="cn">证据：E2 · 细节待核验</span><span class="en">Evidence: E2 · details unverified</span></p></div>
+      <div class="card"><span class="idx">VT 系列</span><h4><span class="cn">长航程复合翼</span><span class="en">Long-range compound wing</span></h4><p><span class="cn">用升力巡航复合构型弥补纯多旋翼航程短板，指向城际与跨水域场景，审定状态与 EH216-S 不同。</span><span class="en">Lift-plus-cruise layout to address range limits; separate certification status.</span></p><p class="foot"><span class="cn">证据：E2 · 非本文重点</span><span class="en">Evidence: E2 · outside main scope</span></p></div>
+    </div>
+
+    <!-- ============ 04 系统架构 ============ -->
+    <h2 id="technology"><span class="h2-num">SECTION 04</span><span class="cn">系统架构与关键技术</span><span class="en">System Architecture and Key Technologies</span></h2>
+
+    <p class="lead cn">EH216-S 的技术选择可以概括为一句话：<strong>用构型与冗余的复杂度，换取运行与操纵的简化</strong>。纯多旋翼不追求气动效率与航程，而是把全部设计余量投入到"无驾驶员条件下仍能安全飞行与降落"这一件事上。</p>
+    <p class="lead en">One sentence summarises the design: complexity of configuration and redundancy is traded for simplicity of operation. The pure multirotor sacrifices aerodynamic efficiency and range to guarantee safe flight and landing with no pilot on board.</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 2 / Figure 2</span><span class="en">Figure 2</span></span>
+      <svg viewBox="0 0 800 470" role="img" aria-label="EH216-S 八轴十六旋翼构型俯视示意图">
+        <rect x="0" y="0" width="800" height="470" fill="#ffffff"/>
+        <text x="24" y="30" class="th">EH216-S 构型俯视示意 · 8 轴 / 16 旋翼</text>
+        <text x="24" y="49" class="tm">Top view · distributed electric propulsion (DEP), coaxial contra-rotating pairs</text>
+        <!-- arms -->
+        <g class="line" stroke-width="7" stroke="#dfe7ea">
+          <line x1="400" y1="240" x2="545" y2="240"/>
+          <line x1="400" y1="240" x2="502" y2="342"/>
+          <line x1="400" y1="240" x2="400" y2="385"/>
+          <line x1="400" y1="240" x2="298" y2="342"/>
+          <line x1="400" y1="240" x2="255" y2="240"/>
+          <line x1="400" y1="240" x2="298" y2="138"/>
+          <line x1="400" y1="240" x2="400" y2="95"/>
+          <line x1="400" y1="240" x2="502" y2="138"/>
+        </g>
+        <!-- rotor pairs -->
+        <g>
+          <!-- 0 -->
+          <circle cx="545" cy="240" r="27" fill="#f2f7f9" stroke="#8fb0bb" stroke-width="1.2"/>
+          <circle cx="545" cy="240" r="18" fill="#fff" stroke="#2e6076" stroke-width="1.4"/>
+          <circle cx="545" cy="240" r="4.5" fill="#102d3c"/>
+          <!-- 45 -->
+          <circle cx="502" cy="342" r="27" fill="#f2f7f9" stroke="#8fb0bb" stroke-width="1.2"/>
+          <circle cx="502" cy="342" r="18" fill="#fff" stroke="#2e6076" stroke-width="1.4"/>
+          <circle cx="502" cy="342" r="4.5" fill="#102d3c"/>
+          <!-- 90 -->
+          <circle cx="400" cy="385" r="27" fill="#f2f7f9" stroke="#8fb0bb" stroke-width="1.2"/>
+          <circle cx="400" cy="385" r="18" fill="#fff" stroke="#2e6076" stroke-width="1.4"/>
+          <circle cx="400" cy="385" r="4.5" fill="#102d3c"/>
+          <!-- 135 -->
+          <circle cx="298" cy="342" r="27" fill="#f2f7f9" stroke="#8fb0bb" stroke-width="1.2"/>
+          <circle cx="298" cy="342" r="18" fill="#fff" stroke="#2e6076" stroke-width="1.4"/>
+          <circle cx="298" cy="342" r="4.5" fill="#102d3c"/>
+          <!-- 180 -->
+          <circle cx="255" cy="240" r="27" fill="#f2f7f9" stroke="#8fb0bb" stroke-width="1.2"/>
+          <circle cx="255" cy="240" r="18" fill="#fff" stroke="#2e6076" stroke-width="1.4"/>
+          <circle cx="255" cy="240" r="4.5" fill="#102d3c"/>
+          <!-- 225 -->
+          <circle cx="298" cy="138" r="27" fill="#f2f7f9" stroke="#8fb0bb" stroke-width="1.2"/>
+          <circle cx="298" cy="138" r="18" fill="#fff" stroke="#2e6076" stroke-width="1.4"/>
+          <circle cx="298" cy="138" r="4.5" fill="#102d3c"/>
+          <!-- 270 -->
+          <circle cx="400" cy="95" r="27" fill="#f2f7f9" stroke="#8fb0bb" stroke-width="1.2"/>
+          <circle cx="400" cy="95" r="18" fill="#fff" stroke="#2e6076" stroke-width="1.4"/>
+          <circle cx="400" cy="95" r="4.5" fill="#102d3c"/>
+          <!-- 315 -->
+          <circle cx="502" cy="138" r="27" fill="#f2f7f9" stroke="#8fb0bb" stroke-width="1.2"/>
+          <circle cx="502" cy="138" r="18" fill="#fff" stroke="#2e6076" stroke-width="1.4"/>
+          <circle cx="502" cy="138" r="4.5" fill="#102d3c"/>
+        </g>
+        <!-- rotation markers -->
+        <g class="tnum" text-anchor="middle">
+          <text x="545" y="207">↻</text><text x="502" y="309">↺</text><text x="433" y="390">↻</text><text x="265" y="309">↺</text>
+          <text x="255" y="207">↻</text><text x="298" y="105">↺</text><text x="433" y="100">↻</text><text x="535" y="105">↺</text>
+        </g>
+        <!-- cabin -->
+        <rect x="356" y="196" width="88" height="88" rx="30" class="box-deep"/>
+        <text x="400" y="235" class="tw" text-anchor="middle">双座座舱</text>
+        <text x="400" y="254" class="tw" text-anchor="middle" font-size="10" opacity="0.8">2 seats</text>
+        <!-- callouts -->
+        <g class="tm">
+          <text x="24" y="86">共轴双桨：每臂上下两层桨叶反向旋转，抵消反扭矩</text>
+          <text x="24" y="104">Coaxial pair: upper and lower rotors counter-rotate</text>
+          <text x="24" y="140">8 臂 × 2 = 16 独立动力单元</text>
+          <text x="24" y="158">Eight arms, sixteen independent drive units</text>
+          <text x="24" y="194">相邻单元旋向交替，单单元失效后由对角单元重构推力</text>
+          <text x="24" y="212">Alternating rotation; thrust reallocation after a single failure</text>
+        </g>
+        <!-- legend right -->
+        <g>
+          <rect x="608" y="86" width="168" height="290" rx="2" class="box-soft"/>
+          <text x="624" y="112" class="th">设计取舍 / Trade-off</text>
+          <text x="624" y="140" class="ts">✓ 无倾转机构，机械简化</text>
+          <text x="624" y="158" class="tm">No tilt mechanism</text>
+          <text x="624" y="186" class="ts">✓ 悬停效率高、起降灵活</text>
+          <text x="624" y="204" class="tm">Efficient hover, small vertiport</text>
+          <text x="624" y="232" class="ts">✓ 冗余度高，容错控制可解</text>
+          <text x="624" y="250" class="tm">High redundancy, tractable control</text>
+          <text x="624" y="278" class="ts">✗ 巡航气动效率低</text>
+          <text x="624" y="296" class="tm">Poor cruise efficiency</text>
+          <text x="624" y="324" class="ts">✗ 航程 / 速度受限</text>
+          <text x="624" y="342" class="tm">Limited range and speed</text>
+        </g>
+        <!-- bottom note -->
+        <line x1="24" y1="418" x2="776" y2="418" class="line"/>
+        <text x="24" y="440" class="tm">教学示意图，按公开构型照片绘制，非工程图纸；旋翼盘直径、机臂长度与安装角均不代表审定值。</text>
+        <text x="24" y="457" class="tm">Teaching schematic from public photographs — not an engineering drawing. E4.</text>
+      </svg>
+      <figcaption><span class="cn">图 2　八轴十六旋翼构型俯视示意。依据公开实拍照片绘制<sup><a class="cite" href="#r33">[33]</a></sup><sup><a class="cite" href="#r34">[34]</a></sup>，用于说明分布式电推进与冗余布局，非工程图纸（E4）。</span><span class="en">Figure 2 · Schematic top view of the 8-arm/16-rotor layout, drawn from public photographs [33][34]. Teaching diagram, not an engineering drawing (E4).</span></figcaption>
+    </figure>
+
+    <h3><span class="cn">4.1　分布式电推进与"全备份"设计</span><span class="en">4.1 Distributed electric propulsion and full redundancy</span></h3>
+    <p class="cn">16 个独立电机—旋翼单元由多组电池分区供电，飞控系统、传感器、动力与通信链路均采用备份设计。企业首席运营官在人民网采访中将这一思路描述为"把 IT 领域的全备份理念融入无人驾驶载人航空器"：一旦某个部件故障，备份部件立即接管<sup><a class="cite" href="#r5">[5]</a></sup>。从工程角度看，这一构型的关键不在于"有多少个旋翼"，而在于<strong>故障检测—隔离—推力重构</strong>闭环能否在秒级完成，且不引入共因失效。</p>
+    <p class="en">Sixteen independent motor-rotor units are fed by partitioned battery groups, with backup flight computers, sensors, power and communication links [5]. The engineering question is not the rotor count but whether fault detection, isolation and thrust reallocation close within seconds without common-cause failure.</p>
+
+    <div class="arch" aria-label="五层系统架构">
+      <div class="arch-row"><div class="arch-label"><span class="cn">① 飞行器平台</span><span class="en">Airframe</span></div><div class="arch-nodes" style="--n:4"><div class="node"><span class="cn">复合材料机身</span><span class="en">Composite airframe</span></div><div class="node"><span class="cn">双座座舱</span><span class="en">Two-seat cabin</span></div><div class="node"><span class="cn">滑橇起落架</span><span class="en">Skid gear</span></div><div class="node"><span class="cn">可折叠机臂</span><span class="en">Folding arms</span></div></div></div>
+      <div class="arch-row"><div class="arch-label"><span class="cn">② 能源与动力</span><span class="en">Energy &amp; propulsion</span></div><div class="arch-nodes" style="--n:4"><div class="node hl"><span class="cn">16 电机 / 电调</span><span class="en">16 motors / ESC</span></div><div class="node hl"><span class="cn">16 旋翼（共轴）</span><span class="en">16 coaxial rotors</span></div><div class="node"><span class="cn">多组动力电池</span><span class="en">Battery packs</span></div><div class="node"><span class="cn">高压配电与热管理</span><span class="en">HV distribution / thermal</span></div></div></div>
+      <div class="arch-row"><div class="arch-label"><span class="cn">③ 飞控与航电</span><span class="en">Avionics</span></div><div class="arch-nodes" style="--n:4"><div class="node"><span class="cn">多余度飞控计算机</span><span class="en">Redundant FCC</span></div><div class="node"><span class="cn">组合导航 GNSS/IMU</span><span class="en">GNSS / IMU</span></div><div class="node"><span class="cn">状态监测与故障诊断</span><span class="en">Health monitoring</span></div><div class="node"><span class="cn">应急着陆逻辑</span><span class="en">Contingency landing</span></div></div></div>
+      <div class="arch-row"><div class="arch-label"><span class="cn">④ 运行与管控</span><span class="en">Operations</span></div><div class="arch-nodes" style="--n:4"><div class="node soft"><span class="cn">预设航线库</span><span class="en">Pre-loaded routes</span></div><div class="node soft"><span class="cn">地面指挥调度中心</span><span class="en">Ground control centre</span></div><div class="node soft"><span class="cn">加密通信链路</span><span class="en">Secure data link</span></div><div class="node soft"><span class="cn">运行数据记录</span><span class="en">Flight data recording</span></div></div></div>
+      <div class="arch-row"><div class="arch-label"><span class="cn">⑤ 外部约束</span><span class="en">Constraints</span></div><div class="arch-nodes" style="--n:4"><div class="node"><span class="cn">适航审定基础</span><span class="en">Certification basis</span></div><div class="node"><span class="cn">空域与航路划设</span><span class="en">Airspace / routes</span></div><div class="node"><span class="cn">起降场与补能设施</span><span class="en">Vertiport / charging</span></div><div class="node"><span class="cn">公众接受度与噪声</span><span class="en">Acceptance / noise</span></div></div></div>
+    </div>
+    <p class="small"><span class="cn">图 3　五层系统架构。前三层属于机载系统，第四层是无人驾驶构型特有的"机—地"耦合层，第五层为外部约束。架构划分依据课件第四章整车架构描述与第五章技术体系<sup><a class="cite" href="#r21">[21]</a></sup><sup><a class="cite" href="#r22">[22]</a></sup>，并结合公开运行方式整理（E4）。</span><span class="en">Figure 3 · Five-layer architecture. Layers 1–3 are on board, layer 4 is the ground-coupling layer unique to pilotless operations, layer 5 lists external constraints [21][22]. Original synthesis (E4).</span></p>
+
+    <h3><span class="cn">4.2　无人驾驶：把"驾驶"从机上移到地面</span><span class="en">4.2 Pilotless operation: moving the pilot to the ground</span></h3>
+    <p class="cn">EH216-S 不设机载驾驶员，按预先设置的航线自主飞行，通过高速网络与地面指挥调度系统实时交互，由地面侧规划与管理飞行路径、飞行时间<sup><a class="cite" href="#r5">[5]</a></sup><sup><a class="cite" href="#r7">[7]</a></sup>。这一设计带来三点工程后果：<strong>其一</strong>，消除了驾驶员人为失误这一传统航空事故主因，但把风险转移到航线规划、链路完整性与地面操作员；<strong>其二</strong>，运行安全从"单机"扩展为"机—地—网"体系问题；<strong>其三</strong>，对信息安全与电磁环境提出了远高于普通消费级无人机的要求。这三点将在姊妹篇安全分析中展开。</p>
+    <p class="en">With no on-board pilot, the aircraft flies pre-programmed routes while exchanging data with a ground control centre [5][7]. This removes pilot error but transfers risk to route planning, link integrity and ground operators, turning safety into a system-of-systems problem — developed further in the companion paper.</p>
+
+    <h3><span class="cn">4.3　能源、补能与结构材料</span><span class="en">4.3 Energy, charging and materials</span></h3>
+    <p class="cn">纯电动力、约 2 小时充电（另有 1 小时快充口径）、25 min 续航，构成典型的"短航时 + 高频次周转"运行特征<sup><a class="cite" href="#r5">[5]</a></sup><sup><a class="cite" href="#r7">[7]</a></sup>。课件第五章判断动力路线将"纯电先行、混动主导、氢能远期、多元并行"<sup><a class="cite" href="#r22">[22]</a></sup>：EH216-S 恰处于"纯电先行"的示范起步期，其航程天花板本质上是电池能量密度与 reserve 要求的共同结果，而非飞控或结构问题。机身大量采用复合材料以控制空重，是载荷—航程权衡中的关键变量<sup><a class="cite" href="#r22">[22]</a></sup>。</p>
+    <p class="en">Battery-electric power, ~2 h charging (1 h fast-charge also reported) and 25 min endurance define short, high-turnover operations [5][7]. Chapter 5 projects a "battery first, hybrid dominant, hydrogen long-term" pathway [22]; EH216-S sits at the first stage, with range limited by battery specific energy and reserve requirements.</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 4 / Figure 4</span><span class="en">Figure 4</span></span>
+      <svg viewBox="0 0 800 320" role="img" aria-label="三大技术域与五大关键技术关系图">
+        <rect width="800" height="320" fill="#fff"/>
+        <text x="24" y="28" class="th">飞行汽车技术架构：三大技术域 × 五大关键技术</text>
+        <text x="24" y="46" class="tm">Three technology domains and five key technology clusters (after Chapter 5, p.20)</text>
+        <g>
+          <rect x="24" y="66" width="238" height="150" rx="2" class="box-blue"/>
+          <text x="143" y="90" class="th" text-anchor="middle">① 平台技术</text>
+          <text x="143" y="107" class="tm" text-anchor="middle">决定载荷航程与安全性</text>
+          <rect x="40" y="120" width="206" height="34" rx="2" class="box"/><text x="143" y="142" class="ts" text-anchor="middle">构型融合 / 气动 / 轻量结构</text>
+          <rect x="40" y="160" width="206" height="34" rx="2" class="box"/><text x="143" y="182" class="ts" text-anchor="middle">增稳容错控制 / 航空电子</text>
+        </g>
+        <g>
+          <rect x="281" y="66" width="238" height="150" rx="2" class="box-blue"/>
+          <text x="400" y="90" class="th" text-anchor="middle">② 动力技术</text>
+          <text x="400" y="107" class="tm" text-anchor="middle">决定使用性能与安全性</text>
+          <rect x="297" y="120" width="206" height="34" rx="2" class="box"/><text x="400" y="142" class="ts" text-anchor="middle">纯电 / 混动 / 氢能</text>
+          <rect x="297" y="160" width="206" height="34" rx="2" class="box"/><text x="400" y="182" class="ts" text-anchor="middle">高效低噪旋翼 / 飞推一体</text>
+        </g>
+        <g>
+          <rect x="538" y="66" width="238" height="150" rx="2" class="box-blue"/>
+          <text x="657" y="90" class="th" text-anchor="middle">③ 交通技术</text>
+          <text x="657" y="107" class="tm" text-anchor="middle">决定运行发展与安全</text>
+          <rect x="554" y="120" width="206" height="34" rx="2" class="box"/><text x="657" y="142" class="ts" text-anchor="middle">感知决策 / 协同路径规划</text>
+          <rect x="554" y="160" width="206" height="34" rx="2" class="box"/><text x="657" y="182" class="ts" text-anchor="middle">低空网联 / 动态空域管理</text>
+        </g>
+        <g>
+          <rect x="24" y="232" width="752" height="56" rx="2" class="box-soft"/>
+          <text x="40" y="253" class="th">五大关键技术</text>
+          <text x="40" y="274" class="ts">构型总体　·　动力推进　·　安全飞行　·　自主驾驶与管控　·　智慧管控与服务</text>
+          <text x="760" y="274" class="tnum" text-anchor="end">E3 / E4</text>
+        </g>
+        <text x="24" y="308" class="tm">按课件第五章第 20 页技术架构体系整理；术语在引用时做了中性化处理，架构关系为本文重绘 [22]。</text>
+      </svg>
+      <figcaption><span class="cn">图 4　三大技术域与五大关键技术关系（依据课件第五章第 20 页重绘<sup><a class="cite" href="#r22">[22]</a></sup>，E3/E4）。EH216-S 在平台与动力域已完成工程闭环，交通域仍处于示范阶段。</span><span class="en">Figure 4 · Three technology domains and five key clusters, redrawn from Chapter 5, p.20 [22]. EH216-S has closed the loop in platform and propulsion; the transport domain remains at demonstration stage.</span></figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 4　关键技术分解与本案例的成熟度判断（Table 4 · Key technologies and maturity judgement）</span><span class="en">Table 4 · Key technologies and maturity judgement</span></caption>
+        <thead><tr><th><span class="cn">技术域</span><span class="en">Domain</span></th><th><span class="cn">关键技术</span><span class="en">Key technology</span></th><th><span class="cn">本案例状态</span><span class="en">Status in this case</span></th><th><span class="cn">判断</span><span class="en">Assessment</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">平台</span><span class="en">Platform</span></td><td><span class="cn">构型总体、轻量结构、增稳容错控制</span><span class="en">Configuration, lightweight structures, fault-tolerant control</span></td><td><span class="cn">通过 TC 审定，限定包线内成立</span><span class="en">Type-certificated within a limited envelope</span></td><td class="lvl-c"><span class="cn">工程可实现</span><span class="en">Feasible</span></td></tr>
+          <tr><td><span class="cn">动力</span><span class="en">Propulsion</span></td><td><span class="cn">分布式电推进、电池冗余与热管理</span><span class="en">DEP, battery redundancy, thermal management</span></td><td><span class="cn">可支撑 25 min / 30 km，无法支撑城际</span><span class="en">Supports 25 min / 30 km, not intercity</span></td><td class="lvl-b"><span class="cn">部分受限</span><span class="en">Constrained</span></td></tr>
+          <tr><td><span class="cn">运行</span><span class="en">Operations</span></td><td><span class="cn">预设航线、地面调度、多机协同</span><span class="en">Pre-loaded routes, ground dispatch, fleet coordination</span></td><td><span class="cn">示范点已运行，高密度运行未验证</span><span class="en">Demonstrated at sites; high-density ops unverified</span></td><td class="lvl-b"><span class="cn">待验证</span><span class="en">To be verified</span></td></tr>
+          <tr><td><span class="cn">支撑</span><span class="en">Enabling</span></td><td><span class="cn">起降场、补能、低空空管、法规标准</span><span class="en">Vertiports, charging, low-altitude ATM, regulation</span></td><td><span class="cn">复用起步、分级配置，体系未成型</span><span class="en">Reuse-first, standards still emerging</span></td><td class="lvl-a"><span class="cn">主要瓶颈</span><span class="en">Main bottleneck</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============ 05 物理边界 ============ -->
+    <h2 id="physics"><span class="h2-num">SECTION 05</span><span class="cn">性能边界与物理约束</span><span class="en">Performance Envelope and Physical Constraints</span></h2>
+
+    <p class="cn">课件第五章给出面向规模化实用的教学门槛：<strong>载荷 ≥ 100 kg、航程 ≥ 100 km</strong>，并把"载荷小、航程短"列为飞行汽车三大技术瓶颈之首<sup><a class="cite" href="#r22">[22]</a></sup>。EH216-S 的公开设计航程为 30 km，载荷能力（按 2 名乘员估算约 160—220 kg）在量级上满足载人需求，但<strong>航程仅为门槛的约 30%</strong>。这不是设计缺陷，而是产品定位的主动选择：它服务的是"点内观光"而非"点到点运输"。</p>
+    <p class="en">Chapter 5 sets an indicative threshold of ≥100 kg payload and ≥100 km range for practical scale [22]. At 30 km design range, EH216-S reaches about 30% of that range threshold — a deliberate positioning choice for sightseeing within a site rather than point-to-point transport.</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 5 / Figure 5</span><span class="en">Figure 5</span></span>
+      <svg viewBox="0 0 800 390" role="img" aria-label="载荷与航程边界示意图">
+        <rect width="800" height="390" fill="#fff"/>
+        <text x="24" y="28" class="th">载荷—航程边界：示范产品与规模化门槛</text>
+        <text x="24" y="46" class="tm">Payload–range envelope: demonstration product vs. scale threshold (teaching schematic, E4)</text>
+        <!-- axes -->
+        <line x1="80" y1="320" x2="760" y2="320" class="line" stroke="#8fa2aa" stroke-width="1.5"/>
+        <line x1="80" y1="320" x2="80" y2="72" class="line" stroke="#8fa2aa" stroke-width="1.5"/>
+        <!-- grid -->
+        <g stroke="#eceff0" stroke-width="1">
+          <line x1="216" y1="80" x2="216" y2="320"/><line x1="352" y1="80" x2="352" y2="320"/>
+          <line x1="488" y1="80" x2="488" y2="320"/><line x1="624" y1="80" x2="624" y2="320"/>
+          <line x1="80" y1="260" x2="760" y2="260"/><line x1="80" y1="200" x2="760" y2="200"/>
+          <line x1="80" y1="140" x2="760" y2="140"/>
+        </g>
+        <g class="tnum" text-anchor="middle">
+          <text x="80" y="338">0</text><text x="216" y="338">50</text><text x="352" y="338">100</text><text x="488" y="338">150</text><text x="624" y="338">200</text><text x="760" y="338">250 km</text>
+        </g>
+        <g class="tnum" text-anchor="end">
+          <text x="72" y="324">0</text><text x="72" y="264">100</text><text x="72" y="204">200</text><text x="72" y="144">300 kg</text>
+        </g>
+        <!-- threshold zone -->
+        <rect x="352" y="80" width="408" height="180" fill="#eef5f2" stroke="#a5c4b1" stroke-width="1.2" stroke-dasharray="5 4"/>
+        <text x="556" y="104" class="ts" text-anchor="middle" fill="#356b52">规模化实用区（教学门槛：≥100 km / ≥100 kg）</text>
+        <text x="556" y="121" class="tm" text-anchor="middle">Indicative scale-feasibility zone</text>
+        <!-- EH216-S point -->
+        <circle cx="161" cy="230" r="9" fill="#102d3c"/>
+        <line x1="161" y1="230" x2="235" y2="185" class="arrow"/>
+        <rect x="238" y="160" width="196" height="48" rx="2" class="box-blue"/>
+        <text x="250" y="180" class="ts">EH216-S（公开口径）</text>
+        <text x="250" y="198" class="tm">~30 km / 2 座 · 示范期定位</text>
+        <!-- target bracket -->
+        <rect x="470" y="230" width="250" height="58" rx="2" class="box-soft"/>
+        <text x="484" y="252" class="ts">复合翼 / 倾转旋翼目标区</text>
+        <text x="484" y="271" class="tm">更高巡航效率，代价是机械与控制复杂度</text>
+        <!-- labels -->
+        <text x="420" y="360" class="tm" text-anchor="middle">设计航程 Design range (km) →</text>
+        <text x="26" y="200" class="tm" transform="rotate(-90 26 200)" text-anchor="middle">有效载荷 Payload (kg) →</text>
+      </svg>
+      <figcaption><span class="cn">图 5　载荷—航程边界教学示意。横纵坐标与点位为按公开参数绘制的示意值，非精确对标；门槛取自课件第五章<sup><a class="cite" href="#r22">[22]</a></sup>（E4）。</span><span class="en">Figure 5 · Indicative payload–range envelope. Axes and positions are schematic, drawn from published figures; threshold from Chapter 5 [22] (E4).</span></figcaption>
+    </figure>
+
+    <h3><span class="cn">5.1　一个可审计的量级估算</span><span class="en">5.1 An auditable order-of-magnitude estimate</span></h3>
+    <p class="cn">以巡航速度 <em>v</em> ≈ 90 km/h、续航 <em>t</em> ≈ 25 min 计算，理论航程 <em>v·t</em> ≈ 37.5 km，与公开的 30 km 设计航程同量级，差额可解释为起降悬停、爬升、航路余度与法规 reserve。若按 30 km 航程、25 min 续航反推，平均任务功率与电池可用能量必须满足 <em>E<sub>usable</sub> ≥ P·t / η</em>；在电池能量密度与 620 kg 级最大起飞重量约束下，<strong>延长航程的唯一现实路径是提高电池比能量或改变构型气动效率</strong>，而非增加电池质量。这与课件对"载荷航程瓶颈"的判断一致<sup><a class="cite" href="#r22">[22]</a></sup>。</p>
+    <p class="en">At v ≈ 90 km/h and t ≈ 25 min, v·t ≈ 37.5 km — the same order as the 30 km design range, with the difference explained by hover, climb, routing margins and reserves. Under a 620 kg-class MTOW, extending range requires higher battery specific energy or better cruise aerodynamics, not simply more battery mass [22].</p>
+
+    <div class="callout">
+      <strong><span class="cn">能力层级：把"能飞"拆成四级</span><span class="en">Capability levels: four distinct meanings of "can fly"</span></strong>
+      <p class="cn">L1 定点起降与悬停（已演示）→ L2 预设航线点内观光飞行（已取证、示范运营）→ L3 多站点、高频次、有限气象条件下的商业运行（部分试点，未验证经济性）→ L4 城市群通勤与规模化运输（现有包线下不成立）。<strong>公开证据主要覆盖 L1—L2；L3 需要运行数据支持；L4 需要构型与能源体系变更。</strong></p>
+      <p class="en">L1 hover and point take-off (demonstrated); L2 pre-programmed on-site sightseeing (certificated, demonstration ops); L3 multi-site high-frequency commercial service (pilots, economics unverified); L4 city-cluster commuting (not supported by the current envelope). Public evidence covers L1–L2.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 5　能力层级与证据状态（Table 5 · Capability levels and evidence）</span><span class="en">Table 5 · Capability levels and evidence</span></caption>
+        <thead><tr><th><span class="cn">层级</span><span class="en">Level</span></th><th><span class="cn">能力描述</span><span class="en">Capability</span></th><th><span class="cn">证据状态</span><span class="en">Evidence status</span></th><th><span class="cn">主要约束</span><span class="en">Binding constraint</span></th></tr></thead>
+        <tbody>
+          <tr><td class="num">L1</td><td><span class="cn">垂直起降、悬停、定点降落</span><span class="en">VTOL, hover, point landing</span></td><td><span class="tag ok">公开演示 / 审定</span></td><td><span class="cn">无</span><span class="en">—</span></td></tr>
+          <tr><td class="num">L2</td><td><span class="cn">预设航线、点内观光、双座载人</span><span class="en">Pre-programmed on-site sightseeing</span></td><td><span class="tag official">TC / AC / PC / OC</span></td><td><span class="cn">气象、空域、场地</span><span class="en">Weather, airspace, site</span></td></tr>
+          <tr><td class="num">L3</td><td><span class="cn">多站点、高频次、可复制商业运行</span><span class="en">Multi-site repeatable commercial service</span></td><td><span class="tag pending">试点中 / 未验证</span></td><td><span class="cn">调度、补能周转、单位经济</span><span class="en">Dispatch, turnaround, unit economics</span></td></tr>
+          <tr><td class="num">L4</td><td><span class="cn">城市群通勤、规模化运输</span><span class="en">City-cluster commuting at scale</span></td><td><span class="tag risk">现有包线下不成立</span></td><td><span class="cn">航程、能量密度、空域体系</span><span class="en">Range, energy density, airspace system</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============ 06 适航 ============ -->
+    <h2 id="certification"><span class="h2-num">SECTION 06</span><span class="cn">适航审定与监管框架</span><span class="en">Certification and Regulatory Framework</span></h2>
+
+    <p class="cn">这是本案例最值得写入课程作业的部分。课件第五章系统梳理了 TC / PC / OC 三证的分工：TC 确认"设计是安全、可行且适用于航空运营"，是投产、注册和投入使用的前提；PC 授权制造商批量生产合格产品，要求全流程制造能力与质量控制体系；OC 审核运营主体是否具备持续安全运行能力，对飞行人员、维护、运行程序与运行控制进行全方位审核<sup><a class="cite" href="#r22">[22]</a></sup>。EH216-S 的取证序列正是这一框架的真实映射。</p>
+    <p class="en">Chapter 5 sets out the division of TC (design approval), PC (production approval) and OC (operator approval) [22]. The EH216-S approval sequence is a real-world mapping of this framework, with the Standard Airworthiness Certificate (AC) covering individual aircraft.</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 6 / Figure 6</span><span class="en">Figure 6</span></span>
+      <svg viewBox="0 0 800 250" role="img" aria-label="适航四证审定流程图">
+        <rect width="800" height="250" fill="#fff"/>
+        <text x="24" y="28" class="th">从设计批准到运行批准：四证闭环</text>
+        <text x="24" y="46" class="tm">Design → airworthiness → production → operation (after Chapter 5, p.28)</text>
+        <g>
+          <rect x="24" y="72" width="168" height="92" rx="2" class="box-deep"/>
+          <text x="108" y="104" class="tw" text-anchor="middle" font-size="17">TC</text>
+          <text x="108" y="126" class="tw" text-anchor="middle" font-size="11">型号合格证</text>
+          <text x="108" y="145" class="tw" text-anchor="middle" font-size="10" opacity="0.8">2023-10-13</text>
+        </g>
+        <g>
+          <rect x="216" y="72" width="168" height="92" rx="2" class="box-blue"/>
+          <text x="300" y="104" class="th" text-anchor="middle" font-size="17">AC</text>
+          <text x="300" y="126" class="th" text-anchor="middle" font-size="11">标准适航证</text>
+          <text x="300" y="145" class="tm" text-anchor="middle">2023-12-21</text>
+        </g>
+        <g>
+          <rect x="408" y="72" width="168" height="92" rx="2" class="box-blue"/>
+          <text x="492" y="104" class="th" text-anchor="middle" font-size="17">PC</text>
+          <text x="492" y="126" class="th" text-anchor="middle" font-size="11">生产许可证</text>
+          <text x="492" y="145" class="tm" text-anchor="middle">2024-04-07</text>
+        </g>
+        <g>
+          <rect x="600" y="72" width="168" height="92" rx="2" class="box-soft"/>
+          <text x="684" y="104" class="th" text-anchor="middle" font-size="17">OC</text>
+          <text x="684" y="126" class="th" text-anchor="middle" font-size="11">运营合格证</text>
+          <text x="684" y="145" class="tm" text-anchor="middle">2025-03-28</text>
+        </g>
+        <g class="arrow" stroke-width="1.6">
+          <line x1="192" y1="118" x2="212" y2="118"/><polyline points="206,113 212,118 206,123" fill="none"/>
+          <line x1="384" y1="118" x2="404" y2="118"/><polyline points="398,113 404,118 398,123" fill="none"/>
+          <line x1="576" y1="118" x2="596" y2="118"/><polyline points="590,113 596,118 590,123" fill="none"/>
+        </g>
+        <g class="tm" text-anchor="middle">
+          <text x="108" y="186">设计阶段 · 型号设计符合性</text>
+          <text x="300" y="186">单机阶段 · 适航状态</text>
+          <text x="492" y="186">生产阶段 · 质量体系</text>
+          <text x="684" y="186">运行阶段 · 持续安全能力</text>
+        </g>
+        <line x1="24" y1="206" x2="776" y2="206" class="line"/>
+        <text x="24" y="228" class="tm">主体：局方（CAAC）主导审定；企业负责设计与制造符合性；运营航司承担运行安全责任。</text>
+        <text x="24" y="244" class="tm">流程依据课件第五章第 28 页重绘，日期来自企业公告与百科交叉核验 [2][6][22]。</text>
+      </svg>
+      <figcaption><span class="cn">图 6　四证审定流程与对应阶段。流程框架依据课件第五章第 28 页重绘<sup><a class="cite" href="#r22">[22]</a></sup>，日期依据企业公告与交叉核验<sup><a class="cite" href="#r2">[2]</a></sup><sup><a class="cite" href="#r6">[6]</a></sup>（E1/E2/E4）。</span><span class="en">Figure 6 · Four-approval certification chain, redrawn from Chapter 5, p.28 [22]; dates from manufacturer releases and cross-checks [2][6].</span></figcaption>
+    </figure>
+
+    <h3><span class="cn">6.1　三套监管体系的横向比较</span><span class="en">6.1 Comparison of three regulatory systems</span></h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 6　CAAC / EASA / FAA 适航与运行框架（Table 6 · Regulatory frameworks）</span><span class="en">Table 6 · Regulatory frameworks</span></caption>
+        <thead><tr><th><span class="cn">体系</span><span class="en">Authority</span></th><th><span class="cn">核心文件</span><span class="en">Key document</span></th><th><span class="cn">特点</span><span class="en">Characteristics</span></th><th><span class="cn">对 EH216-S 的意义</span><span class="en">Implication</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">中国民航局 CAAC</span><span class="en">CAAC, China</span></td><td><span class="cn">《EH216-S 型无人驾驶航空器系统型号合格审定专用条件》<sup><a class="cite" href="#r9">[9]</a></sup>；《无人驾驶航空器飞行管理暂行条例》<sup><a class="cite" href="#r12">[12]</a></sup></span><span class="en">Bespoke special conditions for EH216-S [9]; interim UAV flight regulation [12]</span></td><td><span class="cn">"一事一议"个案突破；批准商业运营试点；为载人类无人驾驶运营标准提供样本</span><span class="en">Case-by-case breakthrough; pilot commercial operations approved</span></td><td><span class="cn">已取得完整准入，但标准体系仍需从个案走向通用</span><span class="en">Full domestic approval obtained; generic standards still emerging</span></td></tr>
+          <tr><td><span class="cn">欧洲航空安全局 EASA</span><span class="en">EASA, Europe</span></td><td><span class="cn">SC-VTOL-01《小型垂直起降飞机专用条件》<sup><a class="cite" href="#r10">[10]</a></sup></span><span class="en">SC-VTOL-01 Special Condition for small VTOL [10]</span></td><td><span class="cn">全球首个相对完整的普适性 eVTOL 适航技术框架，对飞行性能、结构与飞控提出明确要求</span><span class="en">First relatively complete generic eVTOL certification framework</span></td><td><span class="cn">构型与运行模式不同，需按专用条件逐条符合性验证</span><span class="en">Different configuration and operating model require separate compliance</span></td></tr>
+          <tr><td><span class="cn">美国联邦航空局 FAA</span><span class="en">FAA, USA</span></td><td><span class="cn">AAM 实施计划、《先进空中交通国家战略》、powered-lift 运行与驾驶员规则<sup><a class="cite" href="#r11">[11]</a></sup></span><span class="en">AAM Implementation Plan, AAM National Strategy, powered-lift rules [11]</span></td><td><span class="cn">以运行验证、监管工具与制度经验积累见长；体系面向有人驾驶为主</span><span class="en">Strong on operational validation and regulatory tooling; largely pilot-oriented</span></td><td><span class="cn">无人驾驶载人类别的规则适配仍是开放问题</span><span class="en">Rules for pilotless passenger operations remain an open question</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <strong><span class="cn">"汽车监管理念"与"航空监管理念"的冲突</span><span class="en">Automotive vs. aviation regulatory philosophy</span></strong>
+      <p class="cn">课件第五章给出一组极具解释力的对照：航空监管理念把<strong>单机事故视为重大公共风险</strong>，要求事故概率低至 10⁻⁹ 量级，采取事前强约束、全过程审定；汽车监管理念把个体事故视为可统计、可容错，采取市场准入 + 事后监管<sup><a class="cite" href="#r22">[22]</a></sup>。飞行汽车恰好卡在两者之间——它希望获得汽车级的成本与产量，却必须满足航空级的安全。这一矛盾决定了"四证齐全"只是起点，而非商业化终点。</p>
+      <p class="en">Chapter 5 contrasts aviation regulation (single accident as major public risk; ~10⁻⁹ failure probability; ex-ante full-process certification) with automotive regulation (statistically tolerable individual accidents; market entry plus ex-post oversight) [22]. Flying vehicles demand automotive cost at aviation safety — four approvals are a starting point, not the finish line.</p>
+    </div>
+
+    <!-- ============ 07 场景 ============ -->
+    <h2 id="scenarios"><span class="h2-num">SECTION 07</span><span class="cn">应用场景与落地路径</span><span class="en">Operational Scenarios and Deployment Path</span></h2>
+
+    <p class="cn">课件第五章把应用场景概括为<strong>专业化与大众化双线并行</strong>：专业化从刚需（紧急医疗、消防救援、特殊物流）走向增值型行业应用；大众化沿"低空文旅先行 → 枢纽接驳升级 → 区域交通突破 → 城市交通成网"四阶段演进<sup><a class="cite" href="#r22">[22]</a></sup>。EH216-S 当前明确落在<strong>第一阶段</strong>：企业公告与人民网报道均指向低空游览、城市观光、飞行体验，并"根据运营情况和相关法规，逐步开拓城市通勤、空中物流、应急医疗"<sup><a class="cite" href="#r3">[3]</a></sup><sup><a class="cite" href="#r5">[5]</a></sup>。</p>
+    <p class="en">Chapter 5 describes dual tracks: professional missions from essential needs to value-added uses, and mass-market deployment in four stages led by low-altitude tourism [22]. EH216-S currently sits in stage one: sightseeing and flight experience, with other scenarios explicitly deferred [3][5].</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 7 / Figure 7</span><span class="en">Figure 7</span></span>
+      <div class="matrix-wrap">
+        <div class="matrix center" role="table" aria-label="应用场景评估矩阵">
+          <div class="mh"><span class="cn">场景 / Scenario</span><span class="en">Scenario</span></div>
+          <div class="mh"><span class="cn">技术门槛</span><span class="en">Tech. barrier</span></div>
+          <div class="mh"><span class="cn">监管难度</span><span class="en">Reg. difficulty</span></div>
+          <div class="mh"><span class="cn">需求刚性</span><span class="en">Demand</span></div>
+          <div class="mh"><span class="cn">近期可行性</span><span class="en">Near-term</span></div>
+
+          <div class="rowhead"><span class="cn">低空文旅 / 观光</span><span class="en">Sightseeing</span></div>
+          <div class="m1"><span class="cn">低</span><span class="en">Low</span></div><div class="m1"><span class="cn">低</span><span class="en">Low</span></div><div class="m2"><span class="cn">中</span><span class="en">Med</span></div><div class="m4"><span class="cn">高 · 已试点</span><span class="en">High</span></div>
+
+          <div class="rowhead"><span class="cn">枢纽接驳</span><span class="en">Hub connection</span></div>
+          <div class="m2"><span class="cn">中</span><span class="en">Med</span></div><div class="m2"><span class="cn">中</span><span class="en">Med</span></div><div class="m3"><span class="cn">较高</span><span class="en">High</span></div><div class="m2"><span class="cn">中 · 待验证</span><span class="en">Med</span></div>
+
+          <div class="rowhead"><span class="cn">应急 / 警务 / 消防</span><span class="en">Emergency / police</span></div>
+          <div class="m2"><span class="cn">中</span><span class="en">Med</span></div><div class="m2"><span class="cn">中</span><span class="en">Med</span></div><div class="m4"><span class="cn">高</span><span class="en">High</span></div><div class="m3"><span class="cn">较高 · 专业线</span><span class="en">High</span></div>
+
+          <div class="rowhead"><span class="cn">医疗转运</span><span class="en">Medical transport</span></div>
+          <div class="m3"><span class="cn">较高</span><span class="en">High</span></div><div class="m3"><span class="cn">较高</span><span class="en">High</span></div><div class="m4"><span class="cn">高</span><span class="en">High</span></div><div class="m1"><span class="cn">低 · 包线不足</span><span class="en">Low</span></div>
+
+          <div class="rowhead"><span class="cn">即时物流</span><span class="en">Parcel logistics</span></div>
+          <div class="m1"><span class="cn">低</span><span class="en">Low</span></div><div class="m2"><span class="cn">中</span><span class="en">Med</span></div><div class="m1"><span class="cn">低（载人溢价）</span><span class="en">Low</span></div><div class="m1"><span class="cn">低 · 不经济</span><span class="en">Low</span></div>
+
+          <div class="rowhead"><span class="cn">城市通勤 / 城际</span><span class="en">Urban / intercity</span></div>
+          <div class="m4"><span class="cn">很高</span><span class="en">V. high</span></div><div class="m4"><span class="cn">很高</span><span class="en">V. high</span></div><div class="m4"><span class="cn">很高</span><span class="en">V. high</span></div><div class="m0"><span class="cn">不成立</span><span class="en">Not viable</span></div>
+        </div>
+      </div>
+      <figcaption><span class="cn">图 7　应用场景评估矩阵。色阶由浅至深表示"门槛/难度/需求"由低至高，最右列表示综合近期可行性；为本文基于课件框架与公开信息的定性评估（E4），非量化评分。</span><span class="en">Figure 7 · Scenario assessment matrix. Shading indicates increasing barrier/difficulty/demand; rightmost column gives a qualitative near-term viability judgement (E4).</span></figcaption>
+    </figure>
+
+    <div class="flow" aria-label="大众化应用场景四阶段">
+      <div><span class="step-n">STAGE 01</span><strong><span class="cn">低空文旅先行</span><span class="en">Tourism first</span></strong><p><span class="cn">以观光体验切入，技术门槛与政策包容度较高，积累用户信任与运行数据。</span><span class="en">Low barrier, tolerant policy, accumulates operating data.</span></p></div>
+      <div><span class="step-n">STAGE 02</span><strong><span class="cn">枢纽接驳升级</span><span class="en">Hub connection</span></strong><p><span class="cn">连接机场、高铁站等枢纽，实现分钟级立体接驳，成为城市交通补充。</span><span class="en">Links airports and rail hubs as a network supplement.</span></p></div>
+      <div><span class="step-n">STAGE 03</span><strong><span class="cn">区域交通突破</span><span class="en">Regional routes</span></strong><p><span class="cn">城市群间城际飞行，推动适航标准与空域管理体系完善。</span><span class="en">Intercity flights drive standards and airspace reform.</span></p></div>
+      <div><span class="step-n">STAGE 04</span><strong><span class="cn">城市交通成网</span><span class="en">Networked urban air mobility</span></strong><p><span class="cn">与地面公交、轨道协同，形成规模化空地一体出行体系。</span><span class="en">Integrated with ground transit at scale.</span></p></div>
+    </div>
+    <p class="small"><span class="cn">图 8　大众化应用四阶段演进路径，依据课件第五章第 12 页整理<sup><a class="cite" href="#r22">[22]</a></sup>（E3/E4）。EH216-S 处于第 1 阶段。</span><span class="en">Figure 8 · Four-stage mass-market deployment path, from Chapter 5, p.12 [22]. EH216-S is at stage 1.</span></p>
+
+    <div class="photo-strip">
+      <figure>
+        <img src="assets/img/eh216-police.jpg" alt="警用涂装的 EH216 载人航空器在展馆内展示">
+        <figcaption><span class="cn">专业化场景示例：警用涂装的 EH216 展示机，可用于观察巡逻、应急处突等任务改装思路。摄影：CarlosVdeHabsburgo，<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>，Wikimedia Commons<sup><a class="cite" href="#r36">[36]</a></sup>。图中为展示机，不代表取证构型。</span><span class="en">Professional-use example: police-liveried EH216 display aircraft. Photo: CarlosVdeHabsburgo, CC BY-SA 4.0 [36].</span></figcaption>
+      </figure>
+      <figure>
+        <img src="assets/img/helipad.jpg" alt="一处已划设标识的直升机起降坪">
+        <figcaption><span class="cn">基础设施示例：已划设标识的起降坪。课件第五章提出"复用起步 → 分级配置 → 逐步专用"的设施路径<sup><a class="cite" href="#r22">[22]</a></sup>。摄影：NonNerd，CC0，Wikimedia Commons<sup><a class="cite" href="#r38">[38]</a></sup>。图片仅作设施形态示意。</span><span class="en">Infrastructure example: a marked landing pad. Chapter 5 proposes reuse-first, then tiered, then dedicated facilities [22]. Photo: NonNerd, CC0 [38].</span></figcaption>
+      </figure>
+    </div>
+
+    <p class="cn">值得强调一个容易被忽略的约束：<strong>起降场不是"一块空地"</strong>。课件第五章指出，城市可用土地受限、噪声与安全间距要求抬高选址门槛，建设成本高昂且收益不确定，监管标准尚未统一，构成土地—资金—监管交织的系统性约束<sup><a class="cite" href="#r22">[22]</a></sup>。因此"20 多个运营示范点"这类数量指标，必须与"是否具备常态化商业载客条件"分开看待。</p>
+    <p class="en">A vertiport is not merely an empty pad: land availability, noise and safety separation, cost, uncertain returns and unharmonised standards form intertwined constraints [22]. Site counts must therefore be separated from readiness for routine commercial passenger service.</p>
+
+    <!-- ============ 08 市场 ============ -->
+    <h2 id="market"><span class="h2-num">SECTION 08</span><span class="cn">市场可行性分析</span><span class="en">Market Feasibility Analysis</span></h2>
+
+    <p class="cn">课件第五章把飞行汽车定位为<strong>低空经济的主赛道</strong>，并给出融资对比：截至 2025 年 6 月，飞行汽车赛道约 100—120 亿美元、头部效应明显、预计 2025—2030 年迎来商用爆发；同时指出产业正"由研发验证迈向工程化阶段，规模化商用体系亟待完善"<sup><a class="cite" href="#r22">[22]</a></sup>。在这一宏观背景下，对单一型号做收入预测极易失真，因此本文只做<strong>教学敏感性分析</strong>，明确标注假设，不做预测。</p>
+    <p class="en">Chapter 5 positions flying vehicles as the main track of the low-altitude economy, with roughly USD 10–12 bn of sector funding by June 2025, while noting that scaled commercial systems remain immature [22]. Rather than forecast revenue, the analysis below is an explicitly labelled teaching sensitivity exercise.</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 7　整机销售收入教学敏感性（Table 7 · Teaching sensitivity on aircraft sales）</span><span class="en">Table 7 · Teaching sensitivity on aircraft sales</span></caption>
+        <thead><tr><th><span class="cn">情景</span><span class="en">Scenario</span></th><th><span class="cn">累计交付（架）</span><span class="en">Deliveries</span></th><th><span class="cn">确认比例</span><span class="en">Conversion</span></th><th><span class="cn">单价（万元）</span><span class="en">Unit price</span></th><th><span class="cn">整机收入估算</span><span class="en">Est. revenue</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">保守</span><span class="en">Conservative</span></td><td class="num">150</td><td class="num">60%</td><td class="num">239</td><td class="num">≈ 2.2 亿元</td></tr>
+          <tr><td><span class="cn">基准</span><span class="en">Base</span></td><td class="num">600</td><td class="num">75%</td><td class="num">239</td><td class="num">≈ 10.8 亿元</td></tr>
+          <tr><td><span class="cn">积极</span><span class="en">Optimistic</span></td><td class="num">1500</td><td class="num">85%</td><td class="num">239</td><td class="num">≈ 30.5 亿元</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small"><span class="cn">计算式：累计交付 × 确认比例 × 239 万元。单价取自 2024 年官方指导价<sup><a class="cite" href="#r3">[3]</a></sup><sup><a class="cite" href="#r4">[4]</a></sup>；交付量与确认比例为本文设定的教学假设，<strong>不代表订单、产能或实际交付</strong>。不含运营服务、维保、基础设施、补贴、海外市场与二手残值（E4）。人民网报道 2024 年交付 216 架<sup><a class="cite" href="#r5">[5]</a></sup>，可作为量级参照但未经审计。</span><span class="en">Formula: deliveries × conversion × RMB 2.39 M. Price from [3][4]; delivery and conversion figures are teaching assumptions, not orders or capacity (E4). Excludes services, infrastructure, subsidies and overseas markets.</span></p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 9 / Figure 9</span><span class="en">Figure 9</span></span>
+      <svg viewBox="0 0 800 250" role="img" aria-label="市场敏感性条形图">
+        <rect width="800" height="250" fill="#fff"/>
+        <text x="24" y="28" class="th">教学敏感性：整机销售收入估算（亿元）</text>
+        <text x="24" y="46" class="tm">Teaching sensitivity, aircraft sales revenue, RMB 100 million — not a forecast (E4)</text>
+        <g class="tnum"><text x="24" y="88">保守</text><text x="24" y="148">基准</text><text x="24" y="208">积极</text></g>
+        <g>
+          <rect x="90" y="70" width="47" height="26" fill="#9fb0b7"/><text x="147" y="88" class="ts">≈ 2.2</text>
+          <rect x="90" y="130" width="230" height="26" fill="#415d68"/><text x="330" y="148" class="ts" fill="#fff">≈ 10.8</text>
+          <rect x="90" y="190" width="650" height="26" fill="#102d3c"/><text x="600" y="208" class="tw">≈ 30.5</text>
+        </g>
+        <line x1="90" y1="66" x2="90" y2="222" class="line"/>
+        <text x="24" y="238" class="tm">条形长度按线性比例绘制；三情景差异主要来自交付量与确认比例假设，不构成对实际销量的判断。</text>
+      </svg>
+      <figcaption><span class="cn">图 9　三情景整机销售收入敏感性（E4 教学估算）。结论层级：<strong>示范项目与限量销售可能成立 / 高频服务收入缺乏公开证据 / 大众市场规模化不成立</strong>。</span><span class="en">Figure 9 · Three-scenario teaching estimate (E4). Demonstration and limited sales are plausible; high-frequency service revenue lacks public evidence; mass-market scale is not supported.</span></figcaption>
+    </figure>
+
+    <h3><span class="cn">8.1　商业模式：从卖产品到卖运行</span><span class="en">8.1 Business model: from selling aircraft to selling operations</span></h3>
+    <p class="cn">课件第五章给出的两阶段演化是"产品服务耦合期 → 生态导向期"：早期主机厂以生产销售为主，依托政府示范项目验证产品；后期由专业运营商主导，形成"基础设施 + 运输装备 + 全链条服务"三位一体生态，收入模型从"销量 × 单价"转向"飞行时长/里程 × 单位费率"<sup><a class="cite" href="#r22">[22]</a></sup>。EH216-S 目前明显处于第一阶段：OC 由运营航司取得，但商业载客服务在报道时点仍处于"抓紧进行飞行训练、空域协调、数据搜集"的准备阶段<sup><a class="cite" href="#r5">[5]</a></sup>。</p>
+    <p class="en">Chapter 5 describes a two-stage evolution from product-service coupling to an ecosystem model, with revenue shifting from units × price to flight hours / distance × rate [22]. EH216-S is in stage one: the OC had been issued, but commercial passenger service was still in preparation at the time of reporting [5].</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 10 / Figure 10</span><span class="en">Figure 10</span></span>
+      <svg viewBox="0 0 800 272" role="img" aria-label="产业链能力分布示意图">
+        <rect width="800" height="272" fill="#fff"/>
+        <text x="24" y="28" class="th">产业链能力分布：中游强、上下游弱</text>
+        <text x="24" y="46" class="tm">Supply-chain capability: strong midstream, weak upstream and downstream (after Chapter 5, p.16)</text>
+        <g class="ts"><text x="24" y="86">上游 · 材料与核心部件</text><text x="24" y="146">中游 · 整机制造与集成</text><text x="24" y="206">下游 · 运营与制度配套</text></g>
+        <g>
+          <rect x="230" y="70" width="480" height="22" fill="#f5f5f7" stroke="#d8d8dc"/>
+          <rect x="230" y="70" width="192" height="22" fill="#9fb0b7"/>
+          <text x="730" y="86" class="tnum">≈ 2.0 / 5</text>
+          <rect x="230" y="130" width="480" height="22" fill="#f5f5f7" stroke="#d8d8dc"/>
+          <rect x="230" y="130" width="336" height="22" fill="#2e6076"/>
+          <text x="730" y="146" class="tnum">≈ 3.5 / 5</text>
+          <rect x="230" y="190" width="480" height="22" fill="#f5f5f7" stroke="#d8d8dc"/>
+          <rect x="230" y="190" width="168" height="22" fill="#9fb0b7"/>
+          <text x="730" y="206" class="tnum">≈ 1.8 / 5</text>
+        </g>
+        <line x1="230" y1="224" x2="710" y2="224" class="line"/>
+        <text x="24" y="244" class="tm">瓶颈：飞控软件、航电、操作系统等上游关键系统；低空规则、起降场、补能与监管等下游配套。</text>
+        <text x="24" y="262" class="tm">定性刻度为本文依课件描述重绘，非统计数据 [22] (E4)。</text>
+      </svg>
+      <figcaption><span class="cn">图 10　产业链能力分布示意，依据课件第五章第 16 页"中游强、上下游弱"判断重绘<sup><a class="cite" href="#r22">[22]</a></sup>（E4）。对 EH216-S 而言，机体与取证能力已建立，运行生态与制度配套仍是主要短板。</span><span class="en">Figure 10 · Supply-chain capability, redrawn from Chapter 5, p.16 [22] (E4). For EH216-S, airframe and approval capability are established; operating ecosystem remains the weak link.</span></figcaption>
+    </figure>
+
+    <!-- ============ 09 竞品 ============ -->
+    <h2 id="competitors"><span class="h2-num">SECTION 09</span><span class="cn">竞品与技术路线比较</span><span class="en">Competitors and Technology Routes</span></h2>
+
+    <p class="cn">把 EH216-S 与倾转旋翼、复合翼路线并置，能更清楚地看到它的定位：<strong>它不是"更差的 Joby"，而是不同目标函数下的最优解</strong>——用最短的审定路径与最简单的机械构型，换取最早的商业准入；代价是放弃航程与速度。课件第五章对动力路线"纯电先行、混动主导、氢能远期"的判断，也解释了为什么多旋翼构型适合示范起步期<sup><a class="cite" href="#r22">[22]</a></sup>。</p>
+    <p class="en">Set against tilt-rotor and lift-plus-cruise designs, EH216-S is not an inferior Joby but an optimum under a different objective: shortest certification path and simplest mechanics in exchange for earliest market access, at the cost of range and speed [22].</p>
+
+    <figure class="fig">
+      <span class="fig-label"><span class="cn">图 11 / Figure 11</span><span class="en">Figure 11</span></span>
+      <svg viewBox="0 0 800 250" role="img" aria-label="三种 eVTOL 构型对比示意">
+        <rect width="800" height="250" fill="#fff"/>
+        <text x="24" y="28" class="th">三种构型对比：复杂度 / 效率 / 适用航程</text>
+        <text x="24" y="46" class="tm">Configuration comparison (teaching schematic, E4)</text>
+        <!-- multirotor -->
+        <g>
+          <rect x="24" y="62" width="238" height="164" rx="2" class="box-soft"/>
+          <text x="143" y="84" class="th" text-anchor="middle">纯多旋翼 · Multirotor</text>
+          <g stroke="#8fa2aa" stroke-width="3">
+            <line x1="143" y1="140" x2="90" y2="112"/><line x1="143" y1="140" x2="196" y2="112"/>
+            <line x1="143" y1="140" x2="90" y2="168"/><line x1="143" y1="140" x2="196" y2="168"/>
+          </g>
+          <g fill="#e8eff2" stroke="#2e6076"><circle cx="90" cy="112" r="11"/><circle cx="196" cy="112" r="11"/><circle cx="90" cy="168" r="11"/><circle cx="196" cy="168" r="11"/></g>
+          <rect x="125" y="124" width="36" height="32" rx="10" class="box-deep"/>
+          <text x="143" y="210" class="tm" text-anchor="middle">机械最简 · 悬停高效 · 航程最短</text>
+          <text x="143" y="223" class="tnum" text-anchor="middle">EH216-S / VoloCity</text>
+        </g>
+        <!-- compound -->
+        <g>
+          <rect x="281" y="62" width="238" height="164" rx="2" class="box-soft"/>
+          <text x="400" y="84" class="th" text-anchor="middle">复合翼 · Lift + cruise</text>
+          <line x1="330" y1="145" x2="470" y2="145" stroke="#2e6076" stroke-width="5"/>
+          <line x1="400" y1="115" x2="400" y2="175" stroke="#8fa2aa" stroke-width="3"/>
+          <g fill="#e8eff2" stroke="#2e6076"><circle cx="345" cy="145" r="9"/><circle cx="455" cy="145" r="9"/><circle cx="345" cy="118" r="9"/><circle cx="455" cy="118" r="9"/></g>
+          <rect x="386" y="134" width="28" height="22" rx="8" class="box-deep"/>
+          <text x="400" y="210" class="tm" text-anchor="middle">升力/推进分离 · 中长航程</text>
+          <text x="400" y="223" class="tnum" text-anchor="middle">VT 系列 / 峰飞</text>
+        </g>
+        <!-- tiltrotor -->
+        <g>
+          <rect x="538" y="62" width="238" height="164" rx="2" class="box-soft"/>
+          <text x="657" y="84" class="th" text-anchor="middle">倾转旋翼 · Tilt-rotor</text>
+          <line x1="587" y1="145" x2="727" y2="145" stroke="#2e6076" stroke-width="5"/>
+          <g fill="#e8eff2" stroke="#2e6076"><circle cx="600" cy="122" r="12"/><circle cx="714" cy="122" r="12"/><circle cx="640" cy="168" r="10"/><circle cx="674" cy="168" r="10"/></g>
+          <g class="line-d"><line x1="600" y1="132" x2="600" y2="152"/><line x1="714" y1="132" x2="714" y2="152"/></g>
+          <rect x="643" y="134" width="28" height="22" rx="8" class="box-deep"/>
+          <text x="657" y="210" class="tm" text-anchor="middle">巡航效率最高 · 机械与控制最复杂</text>
+          <text x="657" y="223" class="tnum" text-anchor="middle">Joby S4 / Archer Midnight</text>
+        </g>
+      </svg>
+      <figcaption><span class="cn">图 11　三种 eVTOL 构型教学示意（E4），非工程比例图。构型分类依据课件第四章与第五章<sup><a class="cite" href="#r21">[21]</a></sup><sup><a class="cite" href="#r22">[22]</a></sup>。</span><span class="en">Figure 11 · Three eVTOL configurations, teaching schematic (E4), not to scale. Classification after Chapters 4–5 [21][22].</span></figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><span class="cn">表 8　代表性产品对比（Table 8 · Representative products）</span><span class="en">Table 8 · Representative products</span></caption>
+        <thead><tr><th><span class="cn">产品</span><span class="en">Product</span></th><th><span class="cn">构型 / 驾驶</span><span class="en">Config / pilot</span></th><th><span class="cn">航程 / 速度（公开口径）</span><span class="en">Range / speed (published)</span></th><th><span class="cn">审定状态</span><span class="en">Certification</span></th><th><span class="cn">路径特征</span><span class="en">Route</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="cn">亿航 EH216-S</span><span class="en">EHang EH216-S</span></td><td><span class="cn">纯多旋翼 / 无人驾驶</span><span class="en">Multirotor / pilotless</span></td><td class="num"><span class="cn">30 km / 130 km/h</span><span class="en">30 km / 130 km/h</span></td><td><span class="tag official">四证齐全</span></td><td><span class="cn">最早准入，观光切入</span><span class="en">Earliest approval, tourism-led</span></td></tr>
+          <tr><td><span class="cn">Joby S4</span><span class="en">Joby S4</span></td><td><span class="cn">倾转旋翼 / 有人驾驶</span><span class="en">Tilt-rotor / piloted</span></td><td class="num"><span class="cn">约 240 km / 320 km/h</span><span class="en">~240 km / 320 km/h</span></td><td><span class="tag pending">FAA 审定推进中</span></td><td><span class="cn">面向空中出租车主线</span><span class="en">Air-taxi mainstream</span></td></tr>
+          <tr><td><span class="cn">Archer Midnight</span><span class="en">Archer Midnight</span></td><td><span class="cn">倾转旋翼 / 有人驾驶</span><span class="en">Tilt-rotor / piloted</span></td><td class="num"><span class="cn">约 160 km 级</span><span class="en">~160 km class</span></td><td><span class="tag pending">FAA 审定推进中</span></td><td><span class="cn">枢纽接驳导向</span><span class="en">Hub-connection focus</span></td></tr>
+          <tr><td><span class="cn">Volocopter VoloCity</span><span class="en">Volocopter VoloCity</span></td><td><span class="cn">多旋翼 / 有人驾驶</span><span class="en">Multirotor / piloted</span></td><td class="num"><span class="cn">短途城市运行</span><span class="en">Short urban hops</span></td><td><span class="tag pending">EASA 审定推进中</span></td><td><span class="cn">与 EH216-S 构型最接近</span><span class="en">Closest in configuration</span></td></tr>
+          <tr><td><span class="cn">复合翼长航程型号</span><span class="en">Lift-plus-cruise types</span></td><td><span class="cn">复合翼 / 无人驾驶</span><span class="en">Compound wing / pilotless</span></td><td class="num"><span class="cn">约 200 km 级</span><span class="en">~200 km class</span></td><td><span class="tag pending">审定推进中</span></td><td><span class="cn">补足纯多旋翼航程短板</span><span class="en">Addresses the range gap</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small"><span class="cn">竞品参数取自公开汇编与厂商披露的口径<sup><a class="cite" href="#r8">[8]</a></sup><sup><a class="cite" href="#r15">[15]</a></sup>，不同来源差异较大，仅用于路线比较（E2）。用 NASA UAM 成熟度量表的语言概括：EH216-S 是<strong>"监管准入单点耀眼、运行体系仍薄弱"</strong>的典型。</span><span class="en">Competitor figures from public compilations and manufacturer disclosures [8][15]; indicative only (E2). In NASA UAM maturity language: a bright spot in regulatory approval, still weak as an operating system.</span></p>
+
+    <div class="photo-strip">
+      <figure>
+        <img src="assets/img/joby-s4.jpg" alt="Joby Aviation S4 倾转旋翼 eVTOL 试验机停放在爱德华兹空军基地">
+        <figcaption><span class="cn">倾转旋翼路线代表：Joby Aviation S4 试验机。摄影：Harlan Huntington，Public domain（美国空军），Wikimedia Commons<sup><a class="cite" href="#r39">[39]</a></sup>。与 EH216-S 对比可见机翼与可倾转推进短舱带来的构型差异。</span><span class="en">Tilt-rotor benchmark: Joby S4. Photo: Harlan Huntington, public domain (US Air Force), Wikimedia Commons [39].</span></figcaption>
+      </figure>
+      <figure>
+        <img src="assets/img/eh216-front.jpg" alt="EH216 正面视角，展示座舱风挡与两侧机臂">
+        <figcaption><span class="cn">EH216 正面视角：座舱风挡、两侧机臂与共轴动力单元的布置关系。摄影：David Perez，CC0，Wikimedia Commons<sup><a class="cite" href="#r35">[35]</a></sup>。</span><span class="en">Front view showing windshield, arms and coaxial units. Photo: David Perez, CC0 [35].</span></figcaption>
+      </figure>
+    </div>
+
+    <!-- ============ 10 路线 ============ -->
+    <h2 id="roadmap"><span class="h2-num">SECTION 10</span><span class="cn">工程化与规模化路线</span><span class="en">Engineering and Scaling Roadmap</span></h2>
+
+    <p class="cn">综合前九节，本文把从"示范运营"到"可复制商业运行"的路径归纳为四个 Go/No-Go 门槛。每个门槛都给出<strong>可观测的通过条件</strong>，避免用"持续推进""逐步完善"这类不可证伪的表述。</p>
+    <p class="en">Four Go/No-Go gates with observable pass criteria summarise the path from demonstration to repeatable commercial service.</p>
+
+    <div class="cards four" aria-label="四道工程化门槛">
+      <div class="card accent"><span class="idx">GATE 01</span><h4><span class="cn">运行包线扩展</span><span class="en">Envelope expansion</span></h4><p><span class="cn">从封闭景区航线扩展到多站点、跨区域、更复杂气象；以公开飞行手册限制与运行规范为准。</span><span class="en">From closed site routes to multi-site, cross-zone and more demanding weather, bounded by approved limitations.</span></p><p class="foot"><span class="cn">通过条件：获批 ODD/运行规范可查</span><span class="en">Pass: published approved limitations</span></p></div>
+      <div class="card warn"><span class="idx">GATE 02</span><h4><span class="cn">能量与周转</span><span class="en">Energy &amp; turnaround</span></h4><p><span class="cn">补能时间、电池寿命与备件体系支撑高频次运营；单位架次的能耗与维护成本可核算。</span><span class="en">Charging time, battery life and spares support high-frequency operations with auditable per-sortie costs.</span></p><p class="foot"><span class="cn">通过条件：公开单位经济数据</span><span class="en">Pass: published unit economics</span></p></div>
+      <div class="card risk"><span class="idx">GATE 03</span><h4><span class="cn">体系化运行安全</span><span class="en">Systemic operational safety</span></h4><p><span class="cn">多机调度、空域融合、链路完好率、地面操作员资质与应急程序形成闭环，并有可审计的运行数据。</span><span class="en">Fleet dispatch, airspace integration, link integrity, operator licensing and contingency procedures closed with auditable data.</span></p><p class="foot"><span class="cn">通过条件：持续安全记录可核验</span><span class="en">Pass: verifiable safety record</span></p></div>
+      <div class="card ok"><span class="idx">GATE 04</span><h4><span class="cn">法规与商业闭环</span><span class="en">Regulatory &amp; business closure</span></h4><p><span class="cn">从"个案专用条件"走向可复用标准；保险、责任划分、收费机制与跨区域互认同步建立。</span><span class="en">From bespoke conditions to reusable standards, with insurance, liability, pricing and mutual recognition.</span></p><p class="foot"><span class="cn">通过条件：通用标准与费率落地</span><span class="en">Pass: generic standards and tariffs</span></p></div>
+    </div>
+
+    <p class="cn">课件第五章提出的产业跃升路径是"筑基强链与赋能生态"：在产业链侧锻长板、填空白、开新局，在生态侧以核心层的自主可控能力为基础，向外延伸补强政策、空域、数字与基础设施保障<sup><a class="cite" href="#r22">[22]</a></sup>。对 EH216-S 而言，"锻长板"已完成（整机构型与取证），"填空白"（飞控、航电、操作系统等航空级关键系统）与"开新局"（制造—运营—服务一体化）才是真正的长期竞争壁垒。</p>
+    <p class="en">Chapter 5 prescribes strengthening long boards, filling gaps and opening new fronts [22]. For EH216-S, the airframe and approval long board is established; aviation-grade flight control, avionics and operating systems, plus an integrated manufacture–operation–service model, are the real long-term barriers.</p>
+
+    <!-- ============ 11 课程延伸 ============ -->
+    <h2 id="coursework"><span class="h2-num">SECTION 11</span><span class="cn">课程延伸：调研方法复盘</span><span class="en">Course Extension: Reviewing the Research Method</span></h2>
+
+    <p class="cn">课件第四章以飞行汽车为例讲授"如何快速深入了解一个全新技术领域"，第五章进一步给出产业分析、技术体系与标准法规的完整框架<sup><a class="cite" href="#r21">[21]</a></sup><sup><a class="cite" href="#r22">[22]</a></sup>。把本次调研过程复盘为可复用的练习，比记住几个参数更有价值。以下五项练习均可用同一研究对象独立完成，也可替换为其他型号或子系统。</p>
+    <p class="en">Chapter 4 teaches how to enter an unfamiliar technical field; Chapter 5 supplies industry, technology and regulatory frameworks [21][22]. Five reusable exercises follow, each of which can be repeated on another product or subsystem.</p>
+
+    <div class="accordion">
+      <details open><summary><span class="cn">练习 A　构建证据表</span><span class="en">Exercise A · Build an evidence table</span></summary><div class="body"><p class="cn">为本文出现的每个关键数字（航程、续航、MTOW、价格、取证日期）建立一行记录：数值、来源、发布日期、等级、是否存在冲突、核验方式。目标是让任何读者都能独立复现检索结果。</p><p class="en">Log every key number with value, source, date, grade, conflicts and verification method so any reader can reproduce the search.</p></div></details>
+      <details><summary><span class="cn">练习 B　绘制系统边界图</span><span class="en">Exercise B · Draw the system boundary</span></summary><div class="body"><p class="cn">重绘图 3，但把边界改为"机—地—网—管"四域，并标出每个接口的失效模式。思考：哪些接口在有人驾驶航空器中不存在？</p><p class="en">Redraw Figure 3 with aircraft–ground–network–regulator boundaries, mark interface failure modes, and identify interfaces absent in piloted aviation.</p></div></details>
+      <details><summary><span class="cn">练习 C　故障清单与能力层级</span><span class="en">Exercise C · Failure list and capability levels</span></summary><div class="body"><p class="cn">列出 10 项可能导致任务中止或迫降的故障（电机、电调、电池、链路、导航、气象……），并标注每一项落在 L1—L4 哪一层级受影响。该清单将直接作为姊妹篇安全分析的输入。</p><p class="en">List ten failures that could abort a sortie or force a landing, map each to capability levels L1–L4, and use the list as input to the companion safety analysis.</p></div></details>
+      <details><summary><span class="cn">练习 D　场景矩阵与敏感性表</span><span class="en">Exercise D · Scenario matrix and sensitivity table</span></summary><div class="body"><p class="cn">修改表 7 的交付量与确认比例假设，观察结论是否翻转；再为"运营服务收入"单独建立一张敏感性表，比较硬件销售与运行时长两种收入模型的稳定性。</p><p class="en">Vary the assumptions in Table 7 to test whether conclusions flip, then build a separate sensitivity table for service revenue and compare model stability.</p></div></details>
+      <details><summary><span class="cn">练习 E　监管差异对照</span><span class="en">Exercise E · Regulatory gap analysis</span></summary><div class="body"><p class="cn">把 CAAC 专用条件、EASA SC-VTOL-01 与 FAA powered-lift 框架按"设计 / 生产 / 运行 / 人员 / 空域"五个维度对照，找出无人驾驶载人类别尚无对应条款的位置。</p><p class="en">Compare CAAC special conditions, EASA SC-VTOL-01 and FAA powered-lift rules across design, production, operations, personnel and airspace; locate gaps for pilotless passenger operations.</p></div></details>
+    </div>
+
+    <div class="callout note">
+      <strong><span class="cn">可替换的研究对象</span><span class="en">Alternative subjects</span></strong>
+      <p class="cn">小鹏汇天"陆地航母"分体式构型、峰飞复合翼货运型号、Joby S4 倾转旋翼、Volocopter VoloCity 多旋翼、以及"低空空管平台""飞控计算机""动力电池热管理"等子系统，均可用本文的同一套证据—架构—场景—市场框架分析。选定对象后，作业 02 的安全分析可沿用同一对象，形成完整课程作业链。</p>
+      <p class="en">The same framework applies to modular flying vehicles, compound-wing cargo types, tilt-rotor aircraft, other multirotors, or subsystems such as low-altitude traffic management, flight-control computers and battery thermal management.</p>
+    </div>
+
+    <!-- ============ 12 局限 ============ -->
+    <h2 id="limits"><span class="h2-num">SECTION 12</span><span class="cn">局限、未决问题与结论</span><span class="en">Limitations, Open Questions and Conclusion</span></h2>
+
+    <h3><span class="cn">12.1　本文的五项局限</span><span class="en">12.1 Five limitations</span></h3>
+    <ol>
+      <li><span class="cn"><strong>数据边界：</strong>TCDS、专用条件全文、飞行手册限制与运营规范未公开，性能参数均为公开口径而非审定值。</span><span class="en"><strong>Data boundary:</strong> approved data sheets, full special conditions and flight-manual limitations are not public; all figures are published claims.</span></li>
+      <li><span class="cn"><strong>来源冲突：</strong>MTOW、机身尺寸、续航与充电时间在不同来源间存在差异，本文保留冲突而非消解。</span><span class="en"><strong>Source conflicts:</strong> MTOW, dimensions, endurance and charging time differ across sources; conflicts are retained, not resolved.</span></li>
+      <li><span class="cn"><strong>运行数据缺失：</strong>公开的架次、可用率、单位成本、准点率与事件记录不足以评估 L3 层级的经济性。</span><span class="en"><strong>Missing operational data:</strong> sortie counts, availability, unit cost and incident records are insufficient for L3 economics.</span></li>
+      <li><span class="cn"><strong>企业披露偏差：</strong>取证与运营信息主要来自企业一方，宣传性表述已降级但无法完全消除。</span><span class="en"><strong>Disclosure bias:</strong> approval and operating information largely comes from the manufacturer; promotional bias is downgraded but not eliminated.</span></li>
+      <li><span class="cn"><strong>时效性：</strong>低空经济政策、空域规则与审定标准处于快速演进中，本文结论以 2026-11-26 为截止。</span><span class="en"><strong>Time sensitivity:</strong> policy, airspace rules and standards evolve rapidly; conclusions are cut off at 26 Nov 2026.</span></li>
+    </ol>
+
+    <h3><span class="cn">12.2　需要持续追踪的四类证据</span><span class="en">12.2 Four evidence streams to track</span></h3>
+    <div class="cards four">
+      <div class="card"><span class="idx">EVIDENCE 01</span><p><span class="cn">通用适航标准与专用条件的更新，以及跨区域互认进展。</span><span class="en">Updates to generic airworthiness standards and mutual recognition.</span></p></div>
+      <div class="card"><span class="idx">EVIDENCE 02</span><p><span class="cn">商业载客服务的实际开放范围、票价、架次与可用率。</span><span class="en">Actual scope, fares, sortie counts and availability of commercial service.</span></p></div>
+      <div class="card"><span class="idx">EVIDENCE 03</span><p><span class="cn">电池能量密度、快充周转与全寿命成本数据。</span><span class="en">Battery specific energy, fast-charge turnaround and life-cycle cost.</span></p></div>
+      <div class="card"><span class="idx">EVIDENCE 04</span><p><span class="cn">运行安全记录、事件报告与持续适航要求。</span><span class="en">Operational safety records, incident reports and continued airworthiness.</span></p></div>
+    </div>
+
+    <div class="quote">
+      <p><span class="cn">"它不是飞行汽车的终局，而是飞行汽车第一次以完整取证产品的形态，进入真实监管与真实运营的考场。"</span><span class="en">"Not the endgame of the flying car, but the first time it entered the examination room of real regulation and real operations as a fully certificated product."</span></p>
+      <footer><span class="cn">本文结论 · 课程作业 01</span><span class="en">Concluding remark · Coursework 01</span></footer>
+    </div>
+
+    <p class="cn"><strong>总结：</strong>在技术维度，EH216-S 证明了无人驾驶多旋翼载人构型在限定包线内可被审定、可被制造、可被运营批准；在场景维度，它精准地落在低空文旅这一狭窄但真实的第一阶段；在市场维度，它是以示范运营牵引产业链成熟的早期业务，尚不具备高频服务与大众市场规模化的证据。三个维度合起来，恰好对应课件第五章"<strong>产业应用、技术创新、支撑保障</strong>三大支柱协同演进"的判断——目前技术创新支柱最高，产业应用刚起步，支撑保障仍是短板<sup><a class="cite" href="#r22">[22]</a></sup>。</p>
+    <p class="en"><strong>Conclusion:</strong> technically, EH216-S demonstrates that a pilotless multirotor passenger aircraft can be certificated, produced and operator-approved within a limited envelope. Operationally it sits precisely in stage-one low-altitude tourism. Commercially it is an early, demonstration-led business without evidence for high-frequency service or mass-market scale — matching Chapter 5's three-pillar framework, with technology strongest and enabling systems weakest [22].</p>
+
+    <!-- ============ 13 参考文献 ============ -->
+    <h2 id="references"><span class="h2-num">SECTION 13</span><span class="cn">参考文献</span><span class="en">References</span></h2>
+    <p class="small"><span class="cn">文献按本文首次引用顺序编号。企业新闻稿与百科类来源已按 01 节规则标注等级；图片条目附作者与许可协议。</span><span class="en">Numbered in order of first citation. Manufacturer and encyclopaedia sources are graded per Section 01; image entries include author and licence.</span></p>
+    <ol class="refs">
+      <li id="r1"><b>[1]</b> <span class="cn">亿航智能（EHang, Nasdaq: EH）官方网站与产品资料</span><span class="en">EHang official website and product information</span>. <a href="https://www.ehang.com/" target="_blank" rel="noopener">https://www.ehang.com/</a> · E1*</li>
+      <li id="r2"><b>[2]</b> <span class="cn">亿航智能，《亿航智能获得中国民航局颁发的生产许可证，EH216-S 迈入规模化生产》</span><span class="en">EHang, "EHang Receives Production Certificate from CAAC for EH216-S"</span>. <a href="https://www.ehang.com/news/1059.html" target="_blank" rel="noopener">https://www.ehang.com/news/1059.html</a> · E1*</li>
+      <li id="r3"><b>[3]</b> <span class="cn">亿航智能，《EH216-S 在中国市场官方指导价 239 万元人民币》，2024-02-01</span><span class="en">EHang, "Suggested Retail Price of RMB 2.39 Million for EH216-S in China", 1 Feb 2024</span>. <a href="https://www.ehang.com/news/1044.html" target="_blank" rel="noopener">https://www.ehang.com/news/1044.html</a> · E1*</li>
+      <li id="r4"><b>[4]</b> EHang Investor Relations, "EHang Announces Suggested Retail Price of RMB2.39 Million for EH216-S Passenger-Carrying UAV System in China", 1 Feb 2024. <a href="https://ir.ehang.com/news-releases/news-release-details/ehang-announces-suggested-retail-price-rmb239-million-eh216-s/" target="_blank" rel="noopener">ir.ehang.com</a> · E1*</li>
+      <li id="r5"><b>[5]</b> <span class="cn">人民日报 / 人民网，《"空中的士"飞入现实（探访）》，2025-04-26</span><span class="en">People's Daily, "'Air Taxis' Enter Reality", 26 Apr 2025</span>. <a href="https://finance.people.com.cn/BIG5/n1/2025/0426/c1004-40468562.html" target="_blank" rel="noopener">finance.people.com.cn</a> · E2</li>
+      <li id="r6"><b>[6]</b> <span class="cn">百度百科，"EH216-S 无人驾驶载人航空器系统"词条（发展历程、认证节点与参数交叉核验）</span><span class="en">Baidu Baike, "EH216-S" entry (timeline, approvals, specifications)</span>. <a href="https://baike.baidu.com/item/EH216-S%E6%97%A0%E4%BA%BA%E9%A9%BE%E9%A9%B6%E8%BD%BD%E4%BA%BA%E8%88%AA%E7%A9%BA%E5%99%A8/64537562" target="_blank" rel="noopener">baike.baidu.com</a> · E2</li>
+      <li id="r7"><b>[7]</b> <span class="cn">低空经济资源网，亿航 EH216-S 参数配置页（构型、速度、航程、电池、环境限制）</span><span class="en">Low-altitude economy resource portal, EH216-S specification sheet</span>. <a href="https://www.laernoc.com/newsinfo/1831227828784467968" target="_blank" rel="noopener">laernoc.com</a> · E2</li>
+      <li id="r8"><b>[8]</b> <span class="cn">飞行邦，《亿航智能 EH216-S：民航三证的无人驾驶载人 eVTOL》及产品矩阵页（竞品参数口径）</span><span class="en">FlyingState, EH216-S technical overview and EHang product matrix</span>. <a href="http://www.flyingstate.com/1104.html" target="_blank" rel="noopener">flyingstate.com</a> · E2</li>
+      <li id="r9"><b>[9]</b> <span class="cn">中国民用航空局（CAAC），《亿航 EH216-S 型无人驾驶航空器系统型号合格审定专用条件》及适航审定相关公告</span><span class="en">CAAC, "Special Conditions for Type Certification of EHang EH216-S Unmanned Aircraft System"</span>. <a href="https://www.caac.gov.cn/" target="_blank" rel="noopener">https://www.caac.gov.cn/</a> · E1</li>
+      <li id="r10"><b>[10]</b> European Union Aviation Safety Agency (EASA), "Special Condition for Small-Category VTOL Aircraft / SC-VTOL-01", 2019. <a href="https://www.easa.europa.eu/" target="_blank" rel="noopener">https://www.easa.europa.eu/</a> · E1</li>
+      <li id="r11"><b>[11]</b> Federal Aviation Administration (FAA), "Advanced Air Mobility (AAM) Implementation Plan" and "AAM National Strategy 2026–2036"; powered-lift rulemaking. <a href="https://www.faa.gov/" target="_blank" rel="noopener">https://www.faa.gov/</a> · E1</li>
+      <li id="r12"><b>[12]</b> <span class="cn">国务院、中央军委，《无人驾驶航空器飞行管理暂行条例》</span><span class="en">Interim Regulations on the Flight Management of Unmanned Aircraft</span> · E1</li>
+      <li id="r13"><b>[13]</b> <span class="cn">《飞行汽车发展报告 2.0：迈向空地一体交通新时代》（课件第五章核心参考，产业应用 / 技术创新 / 支撑保障三大方向）</span><span class="en">Flying Vehicle Development Report 2.0: Towards Integrated Air-Ground Transport (core reference of Chapter 5)</span> · E3</li>
+      <li id="r14"><b>[14]</b> <span class="cn">张扬军等，《飞行汽车的研究发展与关键技术》（综述性论文，发展阶段、瓶颈与关键技术）</span><span class="en">Zhang Yangjun et al., "Research Development and Key Technologies of Flying Cars" (review)</span> · E3</li>
+      <li id="r15"><b>[15]</b> "Flying Car Transportation System: Advances, Techniques, and Challenges", IEEE Xplore document 9345783. <a href="https://ieeexplore.ieee.org/abstract/document/9345783" target="_blank" rel="noopener">ieeexplore.ieee.org/abstract/document/9345783</a> · E3</li>
+      <li id="r16"><b>[16]</b> Roland Berger, "Passenger Drones Ready for Take-off" (industry report, cited in Chapter 4). <a href="https://www.rolandberger.com/" target="_blank" rel="noopener">rolandberger.com</a> · E3</li>
+      <li id="r17"><b>[17]</b> <span class="cn">中国汽车工程学会 / 相关编写组，《飞行汽车白皮书 1.0》（定义、构成与整车架构，课件第四章引用）</span><span class="en">SAE-China et al., Flying Car White Paper 1.0 (definition and vehicle architecture)</span> · E3</li>
+      <li id="r18"><b>[18]</b> SAE International, ARP4754A "Guidelines for Development of Civil Aircraft and Systems"; ARP4761 "Guidelines and Methods for Conducting the Safety Assessment Process". · E1</li>
+      <li id="r19"><b>[19]</b> RTCA, DO-178C "Software Considerations in Airborne Systems"; DO-254 "Design Assurance Guidance for Airborne Electronic Hardware"; DO-160G "Environmental Conditions and Test Procedures". · E1</li>
+      <li id="r20"><b>[20]</b> ISO 26262 "Road vehicles — Functional safety"; ISO 21448 "Safety of the intended functionality (SOTIF)"; ISO/SAE 21434 "Road vehicles — Cybersecurity engineering". · E1</li>
+      <li id="r21"><b>[21]</b> <span class="cn">张玉新，《第四章 飞行汽车的现状及展望》，飞行汽车技术基础，吉林大学自动驾驶安全联合实验室，2026</span><span class="en">Zhang Yuxin, Chapter 4: Status and Outlook of Flying Vehicles, Jilin University, 2026</span> · E3</li>
+      <li id="r22"><b>[22]</b> <span class="cn">张玉新，《第五章 飞行汽车产业分析及支撑技术》，飞行汽车技术基础，吉林大学自动驾驶安全联合实验室，2026</span><span class="en">Zhang Yuxin, Chapter 5: Industry Analysis and Enabling Technologies, Jilin University, 2026</span> · E3</li>
+      <li id="r23"><b>[23]</b> Yuxin Zhang, "The Flying Tesla Roadster: Technical, Operational, and Market Feasibility", Fundamentals of Flying Vehicle Technology, Case 01 (methodological reference). <a href="https://lab.autozyx.com/fundamentals-of-flying-vehicle-technology/tesla-flying-roadster/" target="_blank" rel="noopener">lab.autozyx.com</a> · E3</li>
+      <li id="r24"><b>[24]</b> <span class="cn">中国民航局关于载人类民用无人驾驶航空器运营合格证（OC）首批颁发的公开信息，2025-03</span><span class="en">CAAC public information on the first Operating Certificates for passenger-carrying UAVs, Mar 2025</span> · E1 / E2</li>
+      <li id="r25"><b>[25]</b> ISO/IEC/IEEE 15288:2015, "Systems and software engineering — System life cycle processes". · E1</li>
+      <li id="r26"><b>[26]</b> NASA / UAM 成熟度与运行概念相关公开材料（用于"单点耀眼、体系薄弱"的类比） · E3</li>
+      <li id="r27"><b>[27]</b> <span class="cn">《低空经济促进法》《空域管理条例》等立法与标准演进讨论（课件第五章第 30—31 页整理）</span><span class="en">Discussion on low-altitude economy legislation and airspace regulation, Chapter 5, pp.30–31</span> · E3</li>
+      <li id="r28"><b>[28]</b> Uber Elevate, "Fast-Forwarding to a Future of On-Demand Urban Air Transportation" (UAM concept reference) · E3</li>
+      <li id="r29"><b>[29]</b> SAE AS9100 "Quality Management Systems — Aviation, Space and Defense"; MIL-STD-882E "System Safety" · E1</li>
+      <li id="r30"><b>[30]</b> Artvill, "EHang 216-S au Salon du Bourget 2025", Wikimedia Commons, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. <a href="https://commons.wikimedia.org/wiki/File:EHang_216-S_au_Salon_du_Bourget_2025.jpg" target="_blank" rel="noopener">commons.wikimedia.org</a></li>
+      <li id="r31"><b>[31]</b> NCDOTcommunications, "NCTranspoSummit-2020.01.08-0087", Wikimedia Commons, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. <a href="https://commons.wikimedia.org/wiki/File:NCTranspoSummit-2020.01.08-0087_(49351366307).jpg" target="_blank" rel="noopener">commons.wikimedia.org</a></li>
+      <li id="r32"><b>[32]</b> David Perez, "EHang 216 5 especificaciones", Wikimedia Commons, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a>.</li>
+      <li id="r33"><b>[33]</b> David Perez, "EHang 216 8 vista general", Wikimedia Commons, CC0.</li>
+      <li id="r34"><b>[34]</b> David Perez, "EHang 216 2 motores", Wikimedia Commons, CC0.</li>
+      <li id="r35"><b>[35]</b> David Perez, "EHang 216 1 frente", Wikimedia Commons, CC0.</li>
+      <li id="r36"><b>[36]</b> CarlosVdeHabsburgo, "EHang 216 de la Policía Nacional", Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</li>
+      <li id="r37"><b>[37]</b> CarlosVdeHabsburgo, "Ehang 216.jpg", Wikimedia Commons, CC BY-SA 4.0.</li>
+      <li id="r38"><b>[38]</b> NonNerd, "Helipad in Jatayu Park", Wikimedia Commons, CC0.</li>
+      <li id="r39"><b>[39]</b> Harlan Huntington / U.S. Air Force, "Joby Aviation S4 experimental eVTOL aircraft at Edwards AFB", Wikimedia Commons, Public domain.</li>
+      <li id="r40"><b>[40]</b> NASA Langley Research Center / NASA Mark Knopp, "Electric Vertical Take-off and Landing Impact Event" (LRC-2025-OCIO P-01814 / P-01840), Wikimedia Commons, Public domain. <span class="cn">（用于姊妹篇坠撞安全讨论）</span><span class="en">(used in the companion safety paper)</span></li>
+    </ol>
+
+    <a class="backlink" href="safety.html">→ <span class="cn">阅读姊妹篇：作业 02 · EH216-S 全方位安全分析</span><span class="en">Read the companion paper: Coursework 02 · Safety Analysis</span></a>
+
+
+
+  </article>
+
+  <aside class="rail" aria-label="证据与阅读提示">
+    <p class="rail-title"><span class="cn">证据分级 / Evidence grades</span><span class="en">Evidence grades</span></p>
+    <ul>
+      <li><strong>E1 · 局方/标准</strong><span class="cn">民航局文件、法规、标准、审定结论。<br>最高可核验等级。</span><span class="en">Regulatory documents, standards and approval records.</span></li>
+      <li><strong>E1* · 企业一手</strong><span class="cn">企业公告与产品资料；含宣传属性，超常规表述降级处理。</span><span class="en">Manufacturer disclosures; promotional claims are downgraded.</span></li>
+      <li><strong>E2 · 交叉核验</strong><span class="cn">权威媒体、百科、参数库；用于识别口径冲突。</span><span class="en">Media, encyclopaedias and spec databases; used to detect discrepancies.</span></li>
+      <li><strong>E3 · 文献/报告</strong><span class="cn">综述论文、产业报告、课件与标准框架。</span><span class="en">Review papers, industry roadmaps and course material.</span></li>
+      <li><strong>E4 · 教学估算</strong><span class="cn">本文计算、图示与情景推演，<b>不构成预测</b>。</span><span class="en">Original estimates and diagrams; <b>not forecasts</b>.</span></li>
+    </ul>
+    <p class="rail-title" style="margin-top:26px"><span class="cn">阅读提示 / Reading notes</span><span class="en">Reading notes</span></p>
+    <ul>
+      <li><span class="cn">点击任意图片可放大查看；顶部 EN 按钮切换中英表述。</span><span class="en">Click any figure to enlarge; the EN button switches language.</span></li>
+      <li><span class="cn">上标编号指向文末参考文献，图注含图片来源与许可协议。</span><span class="en">Superscripts link to references; captions carry image credits and licences.</span></li>
+      <li><span class="cn">姊妹篇（作业 02）对同一型号展开系统安全工程分析。</span><span class="en">The companion paper applies safety systems engineering to the same aircraft.</span></li>
+    </ul>
+  </aside>
+
+</div>
+
+<footer class="fv-footer">
+  <div class="container footer-grid">
+    <div>
+      <h5><span class="cn">关于本页</span><span class="en">About this page</span></h5>
+      <p><span class="cn">《飞行汽车技术基础》课程作业 01：针对飞行汽车某技术/产品的全方位调研与分析。研究对象为亿航 EH216-S 无人驾驶载人 eVTOL，内容覆盖技术可行性、应用场景与市场可行性。全部图片均标注来源与许可协议。</span><span class="en">Coursework 01 for Fundamentals of Flying Vehicle Technology: a comprehensive review of the EHang EH216-S, covering technical feasibility, operational scenarios and market feasibility. All images are credited with source and licence.</span></p>
+      <p><span class="cn">方法与结构参照课程案例页面 <a href="https://lab.autozyx.com/fundamentals-of-flying-vehicle-technology/tesla-flying-roadster/" target="_blank" rel="noopener">The Flying Tesla Roadster</a><sup><a class="cite" href="#r23">[23]</a></sup>；课件依据为第四章、第五章<sup><a class="cite" href="#r21">[21]</a></sup><sup><a class="cite" href="#r22">[22]</a></sup>。</span><span class="en">Method and structure follow the course reference case [23]; course material from Chapters 4 and 5 [21][22].</span></p>
+    </div>
+    <div>
+      <h5><span class="cn">作业导航 / Assignments</span><span class="en">Assignments</span></h5>
+      <p><a href="index.html">01 · 全方位调研与分析（本页）</a></p>
+      <p><a href="safety.html">02 · 全方位安全分析</a></p>
+      <p><span class="cn">证据截止 2026-11-26　|　版本 1.0　|　中英双语</span><span class="en">Evidence cut-off 26 Nov 2026 · v1.0 · bilingual</span></p>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>Fundamentals of Flying Vehicle Technology · Coursework 01</span>
+    <span>EH216-S Case Study · Evidence-graded assessment</span>
+  </div>
+</footer>
+
+<button class="backtop" aria-label="返回顶部">↑</button>
+<script src="assets/app.js"></script>
+</body>
+</html>
